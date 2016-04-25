@@ -4,4 +4,4 @@ except ImportError:
     __version__ = '0.1.0.dev-unknown'
 
 from combo import getComboPartition as combo
-from combo import modularit
+from combo import modularity
