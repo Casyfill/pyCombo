@@ -25,7 +25,6 @@ before_script:
   - git config --global user.name "Philipp Kats"
 script:
   - python setup.py develop && test -w tests/
-  - coverage run --source=pyCombo setup.py test
 after_success:
   - if [[ "$COVERAGE" == "true" ]]; then coveralls || echo "failed"; fi
 cache:
