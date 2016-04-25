@@ -33,7 +33,7 @@ INSTALL_REQUIRES = ['networkx']
 FULLVERSION = '1.1.0'
 
 
-setup(name='pycombo',
+setup(name='pyCombo',
       version=FULLVERSION,
       description='Combo graph partition wrapper',
       license='MIT',
@@ -41,6 +41,6 @@ setup(name='pycombo',
       author_email='casyfill@gmail.com',
       url='https://github.com/Casyfill/pyCOMBO',
       long_description=LONG_DESCRIPTION,
-      packages=['combo', 'pyCombo'],
+      packages=[ 'pyCombo'],
       install_requires=INSTALL_REQUIRES)
 
