@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import pytest
-from pycombo import combo, modularity
-from misc import _partitionGroup as _pg
-from misc import _get_test_graph
+from pyCombo import combo, modularity
+from _misc import _partitionGroup as _pg
+from _misc import _get_test_graph
 
 __author__ = "Philipp Kats"
 __copyright__ = "Philipp Kats"
