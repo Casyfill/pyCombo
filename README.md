@@ -37,8 +37,10 @@ All copiryghts and licensing is same as covered in the initial package
 
 ## Roadmap
 
-- [ ] Initial release ASIS
-- [ ] Tests
-- [ ] Package delivery, setup.py
-- [ ] Installation via pip
+- [x] Initial release ASIS
+- [x] Tests, Travis Ci, Coveralls
+- [x] Package delivery, setup.py
+- [x] Installation via pip
+- [ ] Exceptions
+- [ ] unweighted and directed graph
 

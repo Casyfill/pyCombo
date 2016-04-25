@@ -2,6 +2,12 @@
 Changelog
 =========
 
+Version 1.3
+===========
+
+- added coveralls connection
+
+
 Version 1.1
 ===========
 
