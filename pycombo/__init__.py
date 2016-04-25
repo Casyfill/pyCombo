@@ -3,5 +3,5 @@ try:
 except ImportError:
     __version__ = '0.1.0.dev-unknown'
 
-from combo import getComboPartition as combo
-from combo import modularity
+from pyCombo import getComboPartition as combo
+from pyCombo import modularity
