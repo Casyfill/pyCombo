@@ -3,7 +3,7 @@
 import networkx as nx
 
 
-def partitionGroup(p):
+def _partitionGroup(p):
     '''
     get partition as label-dict
     this way we can check if two partitions are similar, despite
@@ -16,7 +16,7 @@ def partitionGroup(p):
     return sorted(v.values())
 
 
-def get_test_graph():
+def _get_test_graph():
     '''test graph with known partition'''
     G = nx.Graph()
     G.add_nodes_from(range(5))
