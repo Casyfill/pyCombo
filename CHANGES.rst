@@ -2,9 +2,9 @@
 Changelog
 =========
 
-Version 0.1
+Version 1.1
 ===========
 
-- Feature A added
-- FIX: nasty bug #1729 fixed
-- add your changes here!
+- pyscaffold version
+- first tests: combo, modularity
+- new fixed example notebook in examples
