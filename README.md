@@ -1,5 +1,6 @@
 # pyCOMBO
 [![Build Status](https://travis-ci.org/Casyfill/pyCOMBO.svg?branch=master)](https://travis-ci.org/Casyfill/pyCOMBO)
+[![Coverage Status](https://coveralls.io/repos/github/Casyfill/pyCombo/badge.svg?branch=master)](https://coveralls.io/github/Casyfill/pyCombo?branch=master)
 
 **THis is the initial commit, not release version. any code shared AS IS**
 
