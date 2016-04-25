@@ -1,4 +1,5 @@
 # pyCOMBO
+[![Build Status](https://travis-ci.org/Casyfill/pyCOMBO.svg?branch=master)](https://travis-ci.org/Casyfill/pyCOMBO)
 
 **THis is the initial commit, not release version. any code shared AS IS**
 
