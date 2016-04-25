@@ -1,6 +1,8 @@
-import pkg_resources
-
 try:
-    __version__ = pkg_resources.get_distribution(__name__).version
-except:
-    __version__ = 'unknown'
+    from pyCombo.version import version as __version__
+except ImportError:
+    __version__ = '0.1.0.dev-unknown'
+
+
+from pyCombo import getComboPartition as combo
+from pyCombo import modularity as modularity
