@@ -21,3 +21,26 @@ def setup_package():
 
 if __name__ == "__main__":
     setup_package()
+
+LONG_DESCRIPTION = """
+
+tbd
+"""
+
+MAJOR = 0
+
+INSTALL_REQUIRES = ['networkx']
+FULLVERSION = '1.1.0'
+
+
+setup(name='pycombo',
+      version=FULLVERSION,
+      description='Combo graph partition wrapper',
+      license='MIT',
+      author='Philipp Kats',
+      author_email='casyfill@gmail.com',
+      url='https://github.com/Casyfill/pyCOMBO',
+      long_description=LONG_DESCRIPTION,
+      packages=['combo', 'pyCombo'],
+      install_requires=INSTALL_REQUIRES)
+
