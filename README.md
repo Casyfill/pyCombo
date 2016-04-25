@@ -20,9 +20,9 @@ Combo achieves hight quality of partitioning, while being less greedy in terms o
 
 ## Installation
 
-#TODO
+`pip install git+ssh://git@github.com:Casyfill/pyCombo.git@master`
 
-## How to use
+## Dependency
 
 *pyCombo* does not have any dependency, yet it was created having [NetworkX](https://networkx.github.io/) module in mind.
 
