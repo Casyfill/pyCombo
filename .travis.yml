@@ -21,10 +21,11 @@ install:
   - source tests/travis_install.sh
   - pip install -r requirements.txt
 before_script:
-  - git config --global user.email "you@example.com"
-  - git config --global user.name "Your Name"
+  - git config --global user.email "casyfill@gmail.com"
+  - git config --global user.name "Philipp Kats"
 script:
   - python setup.py develop && test -w tests/
+  - coverage run --source=pyCombo setup.py test
 after_success:
   - if [[ "$COVERAGE" == "true" ]]; then coveralls || echo "failed"; fi
 cache:
