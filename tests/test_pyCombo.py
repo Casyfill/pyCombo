@@ -3,8 +3,8 @@
 
 import pytest
 from pycombo import combo, modularity
-from testMisc import partitionGroup as pg
-from testMisc import get_test_graph
+from misc import partitionGroup as pg
+from misc import get_test_graph
 
 __author__ = "Philipp Kats"
 __copyright__ = "Philipp Kats"
