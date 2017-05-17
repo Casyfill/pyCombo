@@ -20,7 +20,7 @@ Combo achieves hight quality of partitioning, while being less greedy in terms o
 
 ## Installation
 
-`pip install git+ssh://git@github.com:Casyfill/pyCombo.git@master`
+`pip install -e git+git@github.com:Casyfill/pyCombo.git@master#egg=pyCombo`
 
 ## Dependency
 
