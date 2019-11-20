@@ -1,0 +1,4 @@
+[
+  "tests/test_poetry_demo.py::test_version",
+  "tests/test_poetry_demo.py::test_toy_network"
+]
