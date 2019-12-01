@@ -34,7 +34,7 @@ const bool debug_verify = false;
 
 #define INF 1000000000
 #define THRESHOLD 1e-6
-const int RAND_MAX2 = RAND_MAX >> 1;
+const int RAND_MAX2 = RAND_MAX / 2;
 
 const double autoC1 = 2;
 const double autoC2 = 1.5;

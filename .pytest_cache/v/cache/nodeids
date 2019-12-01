@@ -1,4 +1,5 @@
 [
   "tests/test_poetry_demo.py::test_version",
-  "tests/test_poetry_demo.py::test_toy_network"
+  "tests/test_graph.py::Test_Graph::test_graph_nx",
+  "tests/test_graph.py::Test_Graph::test_graph_matrix"
 ]

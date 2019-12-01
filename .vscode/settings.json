@@ -1,3 +1,6 @@
 {
-    "python.pythonPath": "/anaconda3/envs/py37/bin/python"
+    "python.pythonPath": "/Users/philippk/anaconda3/envs/py37/bin/python",
+    "files.associations": {
+        "vector": "cpp"
+    }
 }

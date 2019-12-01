@@ -77,7 +77,7 @@ def PerformKernighansShift(Q, correctionVector, communitiesOld, communitiesNew):
                 gains[j] += 4* Q[gains_ind][j]
             else:
                 gains[j] -= 4 * Q[gains_ind][j]
-        communitiesNew[gains_ind] = !communitiesNew[gains_ind]
+        communitiesNew[gains_ind] = not communitiesNew[gains_ind]
         gains[gains_ind] = gains[gains_ind] - 2*n
 
     it = max(gains)
@@ -187,7 +187,7 @@ def DeleteEmptyCommunities(G, moves, splits_communities, origin:int):
         for i in range(origin, commNumber+1):
             splits_communities[i] = splits_communities[i+1]
 
-def RunCombo(G, max_comunities):
+def runCombo(G, max_comunities):
     G.CalcModMtrix();
     G.SetCommunities(np.zeros_like(G.Size()))
 
