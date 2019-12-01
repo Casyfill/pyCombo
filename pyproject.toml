@@ -6,9 +6,11 @@ authors = ["Philipp Kats <casyfill@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.6"
+networkx = "^2.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^3.0"
+hypothesis = "^4.44.4"
 
 [build-system]
 requires = ["poetry>=0.12"]

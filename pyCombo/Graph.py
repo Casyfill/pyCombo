@@ -92,7 +92,7 @@ class Graph:
             for j in range(self.m_size):
                 self.m_modMatrix[i][j] -= sumQ1[i] * sumQ2[j]
 
-        for i in range(self.m_size):  # FIX: I think here is a meaningfull double loop
+        for i in range(self.m_size):  # FIX: I think here is a meaningless double loop
             for j in range(self.m_size):
                 self.m_modMatrix[i][j] = self.m_modMatrix[j][i] = (
                     self.m_modMatrix[i][j] + self.m_modMatrix[j][i]
