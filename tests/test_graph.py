@@ -73,6 +73,16 @@ class Test_Graph:
     #     lw_modularity = community.modularity(l, bbl)
     #     assert g.Modularity() == lw_modularity, g.m_totalWeight
 
+    def test_CommunityInfices(self):
+        from pyCombo import Graph
+
+        bbl = nx.barbell_graph(3, 0)
+        g = Graph(bbl)
+        g.SetCommunities(new_communities=np.zeros(g.m_size, dtype=np.int))
+
+        ci = g.CommunityIndices(0)
+        assert (ci == np.arange(6)).all()
+
     def test_isCommunityEmpty(self, karate):
         from pyCombo import Graph
 
@@ -94,4 +104,14 @@ class Test_Graph:
 
         assert g.m_communityNumber == 2
         assert g.m_communities.sum() == 10
+
+    def test_GetModularitySubmatrix(self):
+        from pyCombo import Graph
+
+        bbl = nx.barbell_graph(3, 0)
+
+        g = Graph(bbl)
+        g.m_modMatrix = np.arange(9).reshape(3, 3)
+        sm = g.GetModularitySubmatrix([1, 0])
+        assert sm.sum().sum() == 8
 

@@ -171,8 +171,7 @@ class Graph:
         return False
 
     def CommunityIndices(self, comm: int):
-
-        res = np.arange(len(self.m_communities))
+        res = np.arange(len(self.m_communities), dtype=np.int)
         return res[self.m_communities == comm]
 
     def GetModularitySubmatrix(self, indices):
@@ -181,7 +180,7 @@ class Graph:
 
         for i in range(l):
             for j in range(l):
-                res[i][k] = self.m_modMatrix[indices[i]][indices[j]]
+                res[i][j] = self.m_modMatrix[indices[i]][indices[j]]
 
         return res
 
