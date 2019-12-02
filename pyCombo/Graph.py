@@ -31,6 +31,9 @@ class Graph:
             np.array(dst, dtype=np.int),
             np.array(weight, dtype=np.float),
         )
+        if np.isnan(weight).all():
+            weight = np.ones(len(weight), dtype=np.int)
+
         self.m_totalWeight = weight.sum()
 
         self.FillMatrix(src, dst, weight)
@@ -100,8 +103,8 @@ class Graph:
                     self.m_modMatrix[i][j] + self.m_modMatrix[j][i]
                 ) / 2
 
-    def EdgeWeight(self, i: int, j: int) -> float:
-        return self.m_matrix[i, j]
+    # def EdgeWeight(self, i: int, j: int) -> float:
+    #     return self.m_matrix[i, j]
 
     def CalcModMtrix(self):
         self.m_modMatrix = self.m_matrix / self.m_totalWeight
@@ -109,11 +112,10 @@ class Graph:
         sumQ1 = self.m_modMatrix.sum(0)
         sumQ2 = self.m_modMatrix.sum(1)
 
-        for i in range(self.m_size):
-            for j in range(self.m_size):
-                self.m_modMatrix[i][j] -= sumQ1[i] * sumQ2[j]
+        self.m_modMatrix -= np.outer(sumQ1, sumQ2)
+
         for i in range(self.m_size):  # FIX: I think here is a meaningfull double loop
-            for j in range(self.m_size):
+            for j in range(i, self.m_size):
                 self.m_modMatrix[i][j] = self.m_modMatrix[j][i] = (
                     self.m_modMatrix[i][j] + self.m_modMatrix[j][i]
                 ) / 2

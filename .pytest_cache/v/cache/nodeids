@@ -6,5 +6,7 @@
   "tests/test_graph.py::Test_Graph::test_graph_Modularity",
   "tests/test_graph.py::Test_Graph::test_isCommunityEmpty",
   "tests/test_graph.py::Test_Graph::test_print",
-  "tests/test_graph.py::Test_Graph::test_check_modularity"
+  "tests/test_graph.py::Test_Graph::test_check_modularity",
+  "tests/test_graph.py::Test_Graph::test_graph_modularity_comp",
+  "tests/test_graph.py::Test_Graph::test_check_modularity_lv"
 ]

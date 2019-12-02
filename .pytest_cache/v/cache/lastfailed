@@ -1,5 +1,6 @@
 {
   "tests/test_graph.py::Test_Graph::test_check_modularity": true,
+  "tests/test_graph.py::Test_Graph::test_check_modularity_lv": true,
   "tests/test_graph.py::Test_Graph::test_print": true,
   "tests/test_graph.py::test_graph_matrix": true
 }
