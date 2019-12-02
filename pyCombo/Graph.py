@@ -32,7 +32,9 @@ class Graph:
             np.array(weight, dtype=np.float),
         )
         self.m_totalWeight = weight.sum()
+
         self.FillMatrix(src, dst, weight)
+        self.FillModMatrix(src, dst, weight)
 
     def Size(self) -> int:
         return self.m_size
@@ -50,7 +52,7 @@ class Graph:
         m = min(src.min(), dst.min())
         m = m if m <= 0 else 1
 
-        if self.m_isOriented:
+        if not self.m_isOriented:
             self.m_totalWeight *= 2
 
         self.m_size = 1 + max(src.max(), dst.max()) - m
@@ -58,7 +60,7 @@ class Graph:
 
         for i in range(len(src)):
             self.m_matrix[src[i] - m][dst[i] - m] += weight[i]
-            if self.m_isOriented:
+            if not self.m_isOriented:
                 self.m_matrix[dst[i] - m][src[i] - m] += weight[i]
 
     def FillModMatrix(self, src: np.array, dst: np.array, weight: np.array) -> None:
@@ -68,13 +70,13 @@ class Graph:
         if self.m_size == 0:
             self.m_size = 1 + max(src.max(), dst.max()) - m
 
-        if self.m_isOriented:
+        if not self.m_isOriented:
             self.m_totalWeight *= 2
 
-        self.m_modMatrix = np.zeroes((self.m_size, self.m_size))
+        self.m_modMatrix = np.zeros((self.m_size, self.m_size))
 
-        sumQ1 = np.zeroes(m_size)
-        sumQ2 = np.zeroes(m_size)
+        sumQ1 = np.zeros(self.m_size)
+        sumQ2 = np.zeros(self.m_size)
 
         for i in range(len(src)):
             n_weight = weight[i] / self.m_totalWeight
@@ -109,7 +111,7 @@ class Graph:
 
         for i in range(self.m_size):
             for j in range(self.m_size):
-                self.m_modMatrix[i][j] -= sumQ1[i] * sumQ[j]
+                self.m_modMatrix[i][j] -= sumQ1[i] * sumQ2[j]
         for i in range(self.m_size):  # FIX: I think here is a meaningfull double loop
             for j in range(self.m_size):
                 self.m_modMatrix[i][j] = self.m_modMatrix[j][i] = (
@@ -122,9 +124,9 @@ class Graph:
         )
 
     def SetCommunities(self, new_communities, number: int = -1) -> None:
-        if self.m_size != len(new_communities):
+        if len(new_communities) != self.m_size:
             raise Exception(
-                f"wrong length of communities vector: {len(communities)}, expected {self.m_size}"
+                f"wrong length of communities vector: {len(new_communities)}, expected {self.m_size}"
             )
 
         self.m_communities = new_communities
@@ -140,7 +142,7 @@ class Graph:
         mod = 0
         for i in range(len(self.m_modMatrix)):
             for j in range(len(self.m_modMatrix)):
-                if self.m_communities[i] == m_communities[j]:
+                if self.m_communities[i] == self.m_communities[j]:
                     mod += self.m_modMatrix[i][j]
         return mod
 
@@ -150,9 +152,8 @@ class Graph:
         if dest == self.m_communityNumber:
             self.m_communityNumber += 1  # NOT SURE IF
 
-        for i in range(self.m_size):
-            if self.m_communities[i] == origin and split_communities[i]:
-                self.m_communities[i] = dest
+        mask = (self.m_communities == origin) & split_communities
+        self.m_communities[mask] = dest
 
     def IsCommunityEmpty(self, comm: int) -> bool:
         return (self.m_communities != comm).all()
@@ -170,7 +171,7 @@ class Graph:
     def CommunityIndices(self, comm: int):
 
         res = np.arange(len(self.m_communities))
-        return res[self.m_communities == com]
+        return res[self.m_communities == comm]
 
     def GetModularitySubmatrix(self, indices):
         l = len(indices)
@@ -184,7 +185,7 @@ class Graph:
 
     def GetCorrectioNVector(self, origCommInd, destCommInd):
         l = len(origCommInd)
-        res = np.zeroes(l)
+        res = np.zeros(l)
 
         for i in range(l):
             for j in range(l):

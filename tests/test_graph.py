@@ -1,4 +1,5 @@
 import networkx as nx
+import numpy as np
 from pathlib import Path
 import pytest
 
@@ -34,5 +35,52 @@ class Test_Graph:
 
         g = Graph(k)
 
-        assert g.m_matrix[1, 0] == 100
+        assert g.m_matrix[1, 0] == 99
+
+    def test_graph_Modularity(self, karate):
+        from pyCombo import Graph
+
+        g = Graph(karate)
+
+        g.SetCommunities(new_communities=np.zeros(g.m_size, dtype=np.int))
+        assert g.m_communityNumber == 1
+
+        v = g.Modularity()
+        assert v == -3.469446951953614e-18
+
+    def test_check_modularity(self):
+        bbl = nx.barbell_graph(10, 0)
+        import community
+        from pyCombo import Graph
+
+        g = Graph(bbl)
+        l = community.best_partition(bbl)
+        zz = np.array(list(l.values()))
+
+        g.SetCommunities(new_communities=zz)
+
+        lw_modularity = community.modularity(l, bbl)
+        assert g.Modularity() == lw_modularity, g.m_modMatrix
+
+    def test_isCommunityEmpty(self, karate):
+        from pyCombo import Graph
+
+        g = Graph(karate)
+        g.SetCommunities(new_communities=np.zeros(g.m_size, dtype=np.int))
+
+        assert g.IsCommunityEmpty(1)
+
+    def PerformSplit(self, karate):
+        from pyCombo import Graph
+
+        g = Graph(karate)
+        g.SetCommunities(new_communities=np.zeros(g.m_size, dtype=np.int))
+
+        mask = np.zeros(g.m_size)
+        mask[:10] = 1
+
+        g.PerformSplit(0, 1, mask)
+
+        assert g.m_communityNumber == 2
+        assert g.m_communities.sum() == 10
 
