@@ -33,6 +33,7 @@ def _fileojb_write_graph(f, G, weight=None)->dict:
         else:
             f.write(f'{nodenum[e[0]]} {nodenum[e[1]]} 1\n')
     f.flush()
+    logger.debug(f'Wrote Graph to `{f.name}`')
     return nodes
 
 def getComboPartition(G, maxcom=None, weight=None):
