@@ -4,15 +4,19 @@ from __future__ import division, absolute_import
 
 import os
 import logging
-# import networkx as nx
+import tempfile
+from pathlib import Path
 
 __author__ = "Philipp Kats"
 __copyright__ = "Philipp Kats"
 __license__ = "mit"
 
-_logger = logging.getLogger(__name__)
-PWD = os.getenv('PWD')
+logger = logging.getLogger(__name__)
 
+
+def _check_repr(G):
+    if type(G).__name__ != 'Graph':
+        raise IOError(f'require networkx graph as first parameter:`{type(G).__name__}`')
 
 def getComboPartition(G, maxcom=None, weight=None):
     '''
@@ -24,44 +28,46 @@ def getComboPartition(G, maxcom=None, weight=None):
     weight - graph esges weight
 
     # TODO: add functionality for unweighted graph
-    # TODO: add exception thrower
     # NOTE: code generates temporary partitioning file
     '''
+<<<<<<< HEAD
     name = type(G).__name__
     if name != "Graph":
         raise IOError(f'require networkx graph as first parameter, got {name}')
+=======
+    _check_repr(G)
+>>>>>>> refactoring code with tempfile
 
-    nodenum = {}
-    nodes = {}
+    nodenum, nodes = {}, {}
 
     # inventorisation
     for i, n in enumerate(G.nodes()):
         nodenum[n] = i
         nodes[i] = n
-
-    # pass edges
-    path = PWD + '/pyCombo/temp.net'
-
-    with open(path, 'w') as f:
-        f.write('*Arcs\n')
-        for e in G.edges(data=True):
-            if weight:
-                f.write('{0} {1} {2}\n'.format(nodenum[e[0]],
-                                               nodenum[e[1]], e[2][weight]))
-            else:
-                f.write('{0} {1} {2}\n'.format(nodenum[e[0]],
-                                               nodenum[e[1]], 1))
+    
+    f = tempfile.NamedTemporaryFile('w')
+    f.write('*Arcs\n')
+    for e in G.edges(data=True):
+        if weight:
+            f.write('{0} {1} {2}\n'.format(nodenum[e[0]],
+                                           nodenum[e[1]], e[2][weight]))
+        else:
+            f.write('{0} {1} {2}\n'.format(nodenum[e[0]],
+                                           nodenum[e[1]], 1))
+    f.flush()
 
     # RUN COMBO
-    command = '{0}/pyCombo/comboCPP '.format(PWD) + path
+    directory = Path(__name__).parent.absolute()
+    path_to_binary = str(directory / "pyCombo/comboCPP")
+    command = '{path_to_binary} {f.name}'
 
-    if maxcom:
-        command += ' {0}'.format(maxcom)  # uses inf or selected max partition
-
-    os.system(command)  # execute bash command
+    if maxcom is not None:
+         command = f'{command} {maxcom}'
+    logger.info(f'Executing command: `{command}`')
+    os.system(command)
 
     # READ RESULTING PARTITON
-    with open(PWD + '/pyCombo/temp_comm_comboC++.txt', 'r') as f:
+    with (directory / 'pyCombo/temp_comm_comboC++.txt').open('r') as f:
         partition = {}
 
         for i, line in enumerate(f):
@@ -80,9 +86,13 @@ def modularity(G:"nx.classes.graph.Graph", partition, key='weight'):
     key:            weight attribute
 
     '''
+<<<<<<< HEAD
     name = type(G).__name__
     if  name != "Graph":
         raise IOError(f'require networkx graph as first parameter, got {name}')
+=======
+    _check_repr(G)
+>>>>>>> refactoring code with tempfile
 
     nodes = G.nodes()
     # compute node weights
