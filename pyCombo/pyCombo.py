@@ -9,7 +9,7 @@ from pathlib import Path
 
 __author__ = "Philipp Kats"
 __copyright__ = "Philipp Kats"
-__license__ = "mit"
+__license__ = "fmit"
 
 logger = logging.getLogger(__name__)
 
@@ -18,6 +18,23 @@ def _check_repr(G):
     if type(G).__name__ != 'Graph':
         raise IOError(f'require networkx graph as first parameter:`{type(G).__name__}`')
 
+def _fileojb_write_graph(f, G, weight=None)->dict:
+
+    nodenum, nodes = {}, {}
+
+    for i, n in enumerate(G.nodes()):
+        nodenum[n] = i
+        nodes[i] = n
+
+    f.write('*Arcs\n')
+    for e in G.edges(data=True):
+        if weight is not None:
+            f.write(f'{nodenum[e[0]]} {nodenum[e[1]]} {nodenum[e[2][weight]]}\n')
+        else:
+            f.write(f'{nodenum[e[0]]} {nodenum[e[1]]} 1\n')
+    f.flush()
+    return nodes
+
 def getComboPartition(G, maxcom=None, weight=None):
     '''
     calculates Combo Partition using Combo C++ script
@@ -25,35 +42,20 @@ def getComboPartition(G, maxcom=None, weight=None):
 
     G - NetworkX graph
     maxcom - maximum number of partitions, by defeult infinite
-    weight - graph esges weight
+    weight - graph edges weight property
 
     # TODO: add functionality for unweighted graph
     # NOTE: code generates temporary partitioning file
     '''
     _check_repr(G)
-
-    nodenum, nodes = {}, {}
-
-    # inventorisation
-    for i, n in enumerate(G.nodes()):
-        nodenum[n] = i
-        nodes[i] = n
     
     f = tempfile.NamedTemporaryFile('w')
-    f.write('*Arcs\n')
-    for e in G.edges(data=True):
-        if weight:
-            f.write('{0} {1} {2}\n'.format(nodenum[e[0]],
-                                           nodenum[e[1]], e[2][weight]))
-        else:
-            f.write('{0} {1} {2}\n'.format(nodenum[e[0]],
-                                           nodenum[e[1]], 1))
-    f.flush()
+    nodes = _fileojb_write_graph(f, G, weight=weight)
 
     # RUN COMBO
     directory = Path(__name__).parent.absolute()
     path_to_binary = str(directory / "pyCombo/comboCPP")
-    command = '{path_to_binary} {f.name}'
+    command = f'{path_to_binary} {f.name}'
 
     if maxcom is not None:
          command = f'{command} {maxcom}'
