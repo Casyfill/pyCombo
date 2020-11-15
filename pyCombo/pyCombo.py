@@ -4,7 +4,7 @@ from __future__ import division, absolute_import
 
 import os
 import logging
-import networkx as nx
+# import networkx as nx
 
 __author__ = "Philipp Kats"
 __copyright__ = "Philipp Kats"
@@ -27,8 +27,9 @@ def getComboPartition(G, maxcom=None, weight=None):
     # TODO: add exception thrower
     # NOTE: code generates temporary partitioning file
     '''
-    if not isinstance(G, nx.classes.graph.Graph):
-        raise IOError('require networkx graph as first parameter')
+    name = type(G).__name__
+    if name != "Graph":
+        raise IOError(f'require networkx graph as first parameter, got {name}')
 
     nodenum = {}
     nodes = {}
@@ -69,7 +70,7 @@ def getComboPartition(G, maxcom=None, weight=None):
     return partition
 
 
-def modularity(G, partition, key='weight'):
+def modularity(G:"nx.classes.graph.Graph", partition, key='weight'):
     '''
     compute network modularity
     for the given partitioning
@@ -79,8 +80,9 @@ def modularity(G, partition, key='weight'):
     key:            weight attribute
 
     '''
-    if not isinstance(G, nx.classes.graph.Graph):
-        raise IOError('require networkx graph as first parameter')
+    name = type(G).__name__
+    if  name != "Graph":
+        raise IOError(f'require networkx graph as first parameter, got {name}')
 
     nodes = G.nodes()
     # compute node weights
@@ -88,8 +90,7 @@ def modularity(G, partition, key='weight'):
         w1 = G.out_degree(weight=key)
         w2 = G.in_degree(weight=key)
     else:
-        w1 = G.degree(weight=key)
-        w2 = G.degree(weight=key)
+        w1 = w2 = G.degree(weight=key)
 
     # compute total network weight
     T = 2.0 * sum([e[2][key] for e in G.edges(data=True)])
