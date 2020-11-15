@@ -18,6 +18,24 @@ def _check_repr(G):
     if type(G).__name__ != 'Graph':
         raise IOError(f'require networkx graph as first parameter:`{type(G).__name__}`')
 
+def _fileojb_write_graph(f, G, weight=None)->dict:
+
+    nodenum, nodes = {}, {}
+
+    for i, n in enumerate(G.nodes()):
+        nodenum[n] = i
+        nodes[i] = n
+
+    f.write('*Arcs\n')
+    for e in G.edges(data=True):
+        if weight is not None:
+            f.write(f'{nodenum[e[0]]} {nodenum[e[1]]} {nodenum[e[2][weight]]}\n')
+        else:
+            f.write(f'{nodenum[e[0]]} {nodenum[e[1]]} 1\n')
+    f.flush()
+    logger.debug(f'Wrote Graph to `{f.name}`')
+    return nodes
+
 def getComboPartition(G, maxcom=None, weight=None):
     '''
     calculates Combo Partition using Combo C++ script
