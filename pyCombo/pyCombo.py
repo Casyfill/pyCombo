@@ -30,13 +30,7 @@ def getComboPartition(G, maxcom=None, weight=None):
     # TODO: add functionality for unweighted graph
     # NOTE: code generates temporary partitioning file
     '''
-<<<<<<< HEAD
-    name = type(G).__name__
-    if name != "Graph":
-        raise IOError(f'require networkx graph as first parameter, got {name}')
-=======
     _check_repr(G)
->>>>>>> refactoring code with tempfile
 
     nodenum, nodes = {}, {}
 
@@ -86,13 +80,7 @@ def modularity(G:"nx.classes.graph.Graph", partition, key='weight'):
     key:            weight attribute
 
     '''
-<<<<<<< HEAD
-    name = type(G).__name__
-    if  name != "Graph":
-        raise IOError(f'require networkx graph as first parameter, got {name}')
-=======
     _check_repr(G)
->>>>>>> refactoring code with tempfile
 
     nodes = G.nodes()
     # compute node weights
