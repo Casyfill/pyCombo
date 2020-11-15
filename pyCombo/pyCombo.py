@@ -73,7 +73,7 @@ def getComboPartition(G, maxcom=None, weight=None):
     return partition
 
 
-def modularity(G, partition, key='weight'):
+def modularity(G:"nx.classes.graph.Graph", partition, key='weight'):
     '''
     compute network modularity
     for the given partitioning
@@ -91,8 +91,7 @@ def modularity(G, partition, key='weight'):
         w1 = G.out_degree(weight=key)
         w2 = G.in_degree(weight=key)
     else:
-        w1 = G.degree(weight=key)
-        w2 = G.degree(weight=key)
+        w1 = w2 = G.degree(weight=key)
 
     # compute total network weight
     T = 2.0 * sum([e[2][key] for e in G.edges(data=True)])
