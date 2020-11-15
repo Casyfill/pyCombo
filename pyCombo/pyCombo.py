@@ -4,15 +4,37 @@ from __future__ import division, absolute_import
 
 import os
 import logging
-# import networkx as nx
+import tempfile
+from pathlib import Path
 
 __author__ = "Philipp Kats"
 __copyright__ = "Philipp Kats"
-__license__ = "mit"
+__license__ = "fmit"
 
-_logger = logging.getLogger(__name__)
-PWD = os.getenv('PWD')
+logger = logging.getLogger(__name__)
 
+
+def _check_repr(G):
+    if type(G).__name__ != 'Graph':
+        raise IOError(f'require networkx graph as first parameter:`{type(G).__name__}`')
+
+def _fileojb_write_graph(f, G, weight=None)->dict:
+
+    nodenum, nodes = {}, {}
+
+    for i, n in enumerate(G.nodes()):
+        nodenum[n] = i
+        nodes[i] = n
+
+    f.write('*Arcs\n')
+    for e in G.edges(data=True):
+        if weight is not None:
+            f.write(f'{nodenum[e[0]]} {nodenum[e[1]]} {nodenum[e[2][weight]]}\n')
+        else:
+            f.write(f'{nodenum[e[0]]} {nodenum[e[1]]} 1\n')
+    f.flush()
+    logger.debug(f'Wrote Graph to `{f.name}`')
+    return nodes
 
 def getComboPartition(G, maxcom=None, weight=None):
     '''
@@ -21,47 +43,28 @@ def getComboPartition(G, maxcom=None, weight=None):
 
     G - NetworkX graph
     maxcom - maximum number of partitions, by defeult infinite
-    weight - graph esges weight
+    weight - graph edges weight property
 
     # TODO: add functionality for unweighted graph
-    # TODO: add exception thrower
     # NOTE: code generates temporary partitioning file
     '''
-    name = type(G).__name__
-    if name != "Graph":
-        raise IOError(f'require networkx graph as first parameter, got {name}')
-
-    nodenum = {}
-    nodes = {}
-
-    # inventorisation
-    for i, n in enumerate(G.nodes()):
-        nodenum[n] = i
-        nodes[i] = n
-
-    # pass edges
-    path = PWD + '/pyCombo/temp.net'
-
-    with open(path, 'w') as f:
-        f.write('*Arcs\n')
-        for e in G.edges(data=True):
-            if weight:
-                f.write('{0} {1} {2}\n'.format(nodenum[e[0]],
-                                               nodenum[e[1]], e[2][weight]))
-            else:
-                f.write('{0} {1} {2}\n'.format(nodenum[e[0]],
-                                               nodenum[e[1]], 1))
+    _check_repr(G)
+    
+    f = tempfile.NamedTemporaryFile('w')
+    nodes = _fileojb_write_graph(f, G, weight=weight)
 
     # RUN COMBO
-    command = '{0}/pyCombo/comboCPP '.format(PWD) + path
+    directory = Path(__name__).parent.absolute()
+    path_to_binary = str(directory / "pyCombo/comboCPP")
+    command = f'{path_to_binary} {f.name}'
 
-    if maxcom:
-        command += ' {0}'.format(maxcom)  # uses inf or selected max partition
-
-    os.system(command)  # execute bash command
+    if maxcom is not None:
+         command = f'{command} {maxcom}'
+    logger.info(f'Executing command: `{command}`')
+    os.system(command)
 
     # READ RESULTING PARTITON
-    with open(PWD + '/pyCombo/temp_comm_comboC++.txt', 'r') as f:
+    with (directory / 'pyCombo/temp_comm_comboC++.txt').open('r') as f:
         partition = {}
 
         for i, line in enumerate(f):
@@ -70,7 +73,7 @@ def getComboPartition(G, maxcom=None, weight=None):
     return partition
 
 
-def modularity(G:"nx.classes.graph.Graph", partition, key='weight'):
+def modularity(G, partition, key:str='weight'):
     '''
     compute network modularity
     for the given partitioning
@@ -80,9 +83,7 @@ def modularity(G:"nx.classes.graph.Graph", partition, key='weight'):
     key:            weight attribute
 
     '''
-    name = type(G).__name__
-    if  name != "Graph":
-        raise IOError(f'require networkx graph as first parameter, got {name}')
+    _check_repr(G)
 
     nodes = G.nodes()
     # compute node weights
