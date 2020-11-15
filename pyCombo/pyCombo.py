@@ -88,7 +88,7 @@ def getComboPartition(G, maxcom=None, weight=None):
     return partition
 
 
-def modularity(G:"nx.classes.graph.Graph", partition, key='weight'):
+def modularity(G, partition, key:str='weight'):
     '''
     compute network modularity
     for the given partitioning
