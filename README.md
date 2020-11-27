@@ -41,6 +41,17 @@ All copiryghts and licensing is same as covered in the initial package
 - [x] Tests, Travis Ci, Coveralls
 - [x] Package delivery, setup.py
 - [x] Installation via pip
+- [x] unweighted graph
+- [ ] check & test modularity
+- [ ] understand 2 partitions issue/reason
+- [ ] directed graph
 - [ ] Exceptions
-- [ ] unweighted and directed graph
 
+
+
+
+# Notes and issues
+
+- pyCombo does not work on graph of N=1
+- pyCombo for some reason always split the network into 2, even for the complete graph
+- binaries are now pulled from https://github.com/Express50/Combo/blob/master/Main.cpp, which fixes a few bugs and passes 
