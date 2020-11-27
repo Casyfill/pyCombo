@@ -11,6 +11,8 @@ from __future__ import print_function, absolute_import, division
 
 import pytest
 import networkx as nx
+from pathlib import Path
+test_dir = Path(__file__).parent
 
 @pytest.fixture(scope='function')
 def test_graph():
@@ -20,3 +22,9 @@ def test_graph():
     G.add_edges_from([(0, 1), (1, 2), (1, 3), (2, 4), (3, 4)])
     nx.set_edge_attributes(G, 1, 'weight')
     return G
+
+
+@pytest.fixture(scope='function')
+def karate():
+    path = test_dir / 'data/karate.net'
+    return nx.readwrite.pajek.read_pajek(str(path))
