@@ -42,7 +42,10 @@ All copiryghts and licensing is same as covered in the initial package
 - [x] Package delivery, setup.py
 - [x] Installation via pip
 - [x] unweighted graph
+- [ ] switched to Github Actions
+- [ ] switch to poetry
 - [ ] check & test modularity
+- [ ] assert reproductibility
 - [ ] understand 2 partitions issue/reason
 - [ ] directed graph
 - [ ] Exceptions
