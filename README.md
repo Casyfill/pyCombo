@@ -4,7 +4,7 @@
 
 **THis is the initial commit, not release version. any code shared AS IS**
 
-This is a python wrapper around C implementation (for Modularity maximization) of the community detection algorithm called "Combo" described in the paper "General optimization technique for high-quality community detection in complex networks" by Stanislav Sobolevsky, Riccardo Campari, Alexander Belyi and Carlo Ratti.
+This is a python wrapper around C++ implementation (for Modularity maximization) of the community detection algorithm called "Combo" described in the paper "General optimization technique for high-quality community detection in complex networks" by Stanislav Sobolevsky, Riccardo Campari, Alexander Belyi and Carlo Ratti.
 
 ![Portugal cellular talks partition](http://senseable.mit.edu/community_detection/img/portugal_img.png)
 
