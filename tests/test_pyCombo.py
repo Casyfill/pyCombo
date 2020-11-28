@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from pyCombo.pyCombo import modularity
 import pytest
 
 def _partitionGroup(p):
@@ -15,21 +16,60 @@ def _partitionGroup(p):
         v.setdefault(value, []).append(key)
     return sorted(v.values())
 
-def test_combo(test_graph):
+@pytest.mark.parametrize('n', [3,4, 5, 10])
+def test_fileojb_write_graph(n):
+    import tempfile
+    from pyCombo.pyCombo import _fileojb_write_graph
+    import networkx as nx
+    test_graph = nx.complete_graph(n)
+    n_edges = (n * (n - 1))/2
+    n_lines = 2 + n + n_edges
+
+    with tempfile.NamedTemporaryFile('w') as tmp:
+        _ = _fileojb_write_graph(tmp, test_graph, weight=None)
+        
+        with open(tmp.name, 'r') as rtmp:
+            lines_list = list(rtmp.readlines())
+            assert len(lines_list) == n_lines, "".join(lines_list)
+
+
+
+# def test_basic_combo(test_graph):
+#     from pyCombo import combo
+
+#     partition, modularity_ = combo(test_graph, weight_prop='weight')
+#     assert isinstance(partition, dict)
+#     assert _partitionGroup(partition) == _partitionGroup({0: 0, 1: 0, 2: 1, 3: 0, 4: 1})
+
+
+def test_errors():
     from pyCombo import combo
+    import networkx as nx
 
-    partition = combo(test_graph, weight='weight')
-    assert isinstance(partition, dict)
-    assert _partitionGroup(partition) == _partitionGroup({0: 0, 1: 0, 2: 1, 3: 0, 4: 1})
+    graph = nx.Graph()  # empty
+    with pytest.raises(ValueError):
+        combo(graph)
 
-    with pytest.raises(IOError):
-        combo(42, weight='weight')
+    # number
+    with pytest.raises(ValueError):
+        combo(42, weight_prop='weight')
 
 
+# @pytest.mark.parametrize('full_graph_size', [2,3, 10, 100])
+# def test_modularity_complete_graph(full_graph_size):
+#     from pyCombo import combo
+#     import networkx as nx
+    
+#     graph = nx.complete_graph(full_graph_size)
+#     partition, modularity_ = combo(graph)
 
-def test_modularity(test_graph):
-    from pyCombo import combo, modularity
-	
-    partition = combo(test_graph, weight='weight')
-    assert modularity(test_graph, partition, key='weight') == pytest.approx(0.08000000000000004, 0.00000001)
+#     parts = {}
+#     for node, part in partition.items():
+#         if part not in parts:
+#             parts[part] = {node, }
+#         else:
+#             parts[part].add(node)
 
+    
+#     assert len(parts.keys()) == 1, parts
+#     # assert modularity_ == 1
