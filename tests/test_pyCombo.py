@@ -5,11 +5,11 @@ import pytest
 
 
 def _partitionGroup(p):
-    '''
+    """
     get partition as label-dict
     this way we can check if two partitions are similar, despite
     different labels
-    '''
+    """
 
     v = {}
     for key, value in sorted(p.items()):
@@ -17,19 +17,20 @@ def _partitionGroup(p):
     return sorted(v.values())
 
 
-@pytest.mark.parametrize('n', [3, 4, 5, 10])
+@pytest.mark.parametrize("n", [3, 4, 5, 10])
 def test_fileojb_write_graph(n):
     import tempfile
     from pyCombo.pyCombo import _fileojb_write_graph
     import networkx as nx
+
     test_graph = nx.complete_graph(n)
     n_edges = (n * (n - 1)) / 2
     n_lines = 2 + n + n_edges
 
-    with tempfile.NamedTemporaryFile('w') as tmp:
+    with tempfile.NamedTemporaryFile("w") as tmp:
         _ = _fileojb_write_graph(tmp, test_graph, weight=None)
 
-        with open(tmp.name, 'r') as rtmp:
+        with open(tmp.name, "r") as rtmp:
             lines_list = list(rtmp.readlines())
             assert len(lines_list) == n_lines, "".join(lines_list)
 
@@ -52,7 +53,7 @@ def test_errors():
 
     # number
     with pytest.raises(ValueError):
-        combo(42, weight_prop='weight')
+        combo(42, weight_prop="weight")
 
 
 # @pytest.mark.parametrize('full_graph_size', [2,3, 10, 100])
