@@ -10,7 +10,7 @@ from typing import Optional
 
 __author__ = "Philipp Kats"
 __copyright__ = "Philipp Kats"
-__license__ = "mit"
+__license__ = "fmit"
 
 __all__ = ["getComboPartition", "modularity"]
 logger = logging.getLogger(__name__)
