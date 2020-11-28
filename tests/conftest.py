@@ -14,6 +14,7 @@ import networkx as nx
 from pathlib import Path
 test_dir = Path(__file__).parent
 
+
 @pytest.fixture(scope='function')
 def test_graph():
     '''test graph with known partition'''
