@@ -13,4 +13,4 @@ def test_modularity_karate(karate):
     from pyCombo import combo
 
     _, modularity_ = combo(karate)
-    assert modularity_ == 0.41979
+    assert modularity_ == 0.437212

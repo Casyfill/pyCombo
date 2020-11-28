@@ -26,5 +26,5 @@ def test_graph():
 
 @pytest.fixture(scope='function')
 def karate():
-    path = test_dir / 'data/karate.net'
-    return nx.readwrite.pajek.read_pajek(str(path))
+    import networkx as nx
+    return nx.karate_club_graph()
