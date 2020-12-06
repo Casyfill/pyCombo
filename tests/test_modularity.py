@@ -12,7 +12,6 @@ def test_modularity_test_graph(test_graph):
     assert modularity_ == lv_modularity
     # assert modularity_ == pytest.approx(modularity(test_graph, partition, key='weight') )
 
-
 def test_modularity_karate(karate):
     from pyCombo import combo
 
