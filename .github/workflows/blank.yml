@@ -15,11 +15,12 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
-    runs-on: macos-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: [3.7, ]
+        python-version: [3.7, 3.9]
         poetry-version: [1.1.4]
+        os: [ubuntu-latest, macOS-latest, windows-latest]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
