@@ -4,6 +4,7 @@ version = "0.0.1"
 description = "Python wrapper around Combo network partitioning algorythm (C++)"
 authors = ["Philipp <casyfill@gmail.com>"]
 license = "MIT"
+build = 'build.py'
 
 [tool.poetry.dependencies]
 python = "^3.7"
