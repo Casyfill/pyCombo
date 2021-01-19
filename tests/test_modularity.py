@@ -1,16 +1,22 @@
 import pytest
 
 
-def test_modularity_test_graph(test_graph):
-    from pyCombo import combo  # , modularity
+def test_cCombo():
+    from pycombo import combo
 
-    _, modularity_ = combo(test_graph, weight_prop="weight")
+    assert combo.__doc__ == "combo partition Python binding"
+
+
+def test_modularity_test_graph(test_graph):
+    from pycombo.pyCombo import getComboPartition
+
+    _, modularity_ = getComboPartition(test_graph, weight_prop="weight")
     assert modularity_ == pytest.approx(0.16, 0.0001)
     # assert modularity_ == pytest.approx(modularity(test_graph, partition, key='weight') )
 
 
 def test_modularity_karate(karate):
-    from pyCombo import combo
+    from pycombo.pyCombo import getComboPartition
 
-    _, modularity_ = combo(karate)
+    _, modularity_ = getComboPartition(karate)
     assert modularity_ == 0.437212

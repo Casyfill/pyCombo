@@ -18,7 +18,7 @@
     You should have received a copy of the GNU General Public License
     along with Combo.  If not, see <http://www.gnu.org/licenses/>.
 */
-
+#include <pybind11/pybind11.h>
 #include <ctime>
 #include <cstdio>
 
@@ -27,7 +27,9 @@
 #include <cmath>
 #include <iostream>
 #include <algorithm>
-using namespace std;
+// using namespace std;
+
+namespace py = pybind11;
 
 //settings
 const bool debug_verify = false;
@@ -47,10 +49,10 @@ double mod_resolution = 1.0;
 
 double best_gain = 1.0;
 
-vector<double> Sum(const vector< vector<double> >& matrix)
+std::vector<double> Sum(const std::vector< std::vector<double> >& matrix)
 {
 	int n = matrix.size();
-	vector<double> res(n, 0.0);
+	std::vector<double> res(n, 0.0);
 	for(int i = 0; i < n; ++i)
 		for(int j = 0; j < n; ++j)
 			res[i] += matrix[i][j];
@@ -61,10 +63,10 @@ template<typename T> bool Positive(T x) {return x > 0.0;}
 template<typename T> bool Negative(T x) {return x < 0.0;}
 template<typename T> bool NotNegative(T x) {return x >= 0.0;}
 template<typename T> bool NotPositive(T x) {return x <= 0.0;}
-vector<double> SumPos(const vector< vector<double> >& matrix, bool (*Pred)(double) = NULL)
+std::vector<double> SumPos(const std::vector< std::vector<double> >& matrix, bool (*Pred)(double) = NULL)
 {
 	int n = matrix.size();
-	vector<double> res(n, 0.0);
+	std::vector<double> res(n, 0.0);
 	for(int i = 0; i < n; ++i)
 		for(int j = 0; j < n; ++j)
 			if(Pred && Pred(matrix[i][j]))
@@ -73,7 +75,7 @@ vector<double> SumPos(const vector< vector<double> >& matrix, bool (*Pred)(doubl
 }
 
 template<typename T>
-bool TestAll(const vector<T>& vec, bool (*Pred)(T))
+bool TestAll(const std::vector<T>& vec, bool (*Pred)(T))
 {
 	int n = vec.size();
 	for(int i = 0; i < n; ++i)
@@ -82,7 +84,7 @@ bool TestAll(const vector<T>& vec, bool (*Pred)(T))
 	return true;
 }
 
-double ModGain(const vector< vector<double> >& Q, const vector<double>& correctionVector, const vector<int>& community)
+double ModGain(const std::vector< std::vector<double> >& Q, const std::vector<double>& correctionVector, const std::vector<int>& community)
 {
 	int n = community.size();
 	double mod_gain = 0.0;
@@ -105,10 +107,10 @@ double ModGain(const vector< vector<double> >& Q, const vector<double>& correcti
 	return mod_gain;
 }
 
-double PerformKernighansShift(const vector< vector<double> >& Q, const vector<double>& correctionVector, const vector<int>& communitiesOld, vector<int>& communitiesNew) //perform a split improvement using a Karnigan-Lin-style iterative shifts series
+double PerformKernighansShift(const std::vector< std::vector<double> >& Q, const std::vector<double>& correctionVector, const std::vector<int>& communitiesOld, std::vector<int>& communitiesNew) //perform a split improvement using a Karnigan-Lin-style iterative shifts series
 {
  	int n = Q.size();
-	vector<double> gains(n, 0.0);
+	std::vector<double> gains(n, 0.0);
 	for(int i = 0; i < n; ++i)
 	{
 		for(int j = 0; j < n; ++j)
@@ -124,12 +126,12 @@ double PerformKernighansShift(const vector< vector<double> >& Q, const vector<do
 			gains[i] += correctionVector[i];
 		gains[i] *= 2;
 	}
-	vector<double> gains_got(n, 0.0);
-	vector<int> gains_indexes(n, 0);
+	std::vector<double> gains_got(n, 0.0);
+	std::vector<int> gains_indexes(n, 0);
 	communitiesNew = communitiesOld;
 	for(int i = 0; i < n; ++i)
 	{
-		vector<double>::iterator it = max_element(gains.begin(), gains.end());
+		std::vector<double>::iterator it = max_element(gains.begin(), gains.end());
 		gains_got[i] = *it;
 		int gains_ind = it - gains.begin();
 		gains_indexes[i] = gains_ind;
@@ -143,7 +145,7 @@ double PerformKernighansShift(const vector< vector<double> >& Q, const vector<do
 		communitiesNew[gains_ind] = !communitiesNew[gains_ind];
 		gains[gains_ind] = gains[gains_ind] - 2*n;
 	}
-	vector<double>::iterator it = max_element(gains_got.begin(), gains_got.end());
+	std::vector<double>::iterator it = max_element(gains_got.begin(), gains_got.end());
 	double mod_gain = *it;
 	int stepsToGetMaxGain = it - gains_got.begin() + 1;
 	if(mod_gain > 0)
@@ -160,10 +162,10 @@ double PerformKernighansShift(const vector< vector<double> >& Q, const vector<do
 	return mod_gain;
 }
 
-double Split(vector< vector<double> >& Q, const vector<double>& correctionVector, vector<int>& splitCommunity) //try to split the subnetwork with respect to the correction vector
+double Split(std::vector< std::vector<double> >& Q, const std::vector<double>& correctionVector, std::vector<int>& splitCommunity) //try to split the subnetwork with respect to the correction vector
 {
 	double mod_gain = 0.0;
-	vector<double> sumQ = Sum(Q);
+	std::vector<double> sumQ = Sum(Q);
 	int n = Q.size();
 	for(int i = 0; i < n; ++i)
 		Q[i][i] += 2 * correctionVector[i] - sumQ[i]; //adjust the submatrix
@@ -178,7 +180,7 @@ double Split(vector< vector<double> >& Q, const vector<double>& correctionVector
 		tryI = tryI + 1;
 
 		//perform an initial simple split
-		vector<int> communities0(n);
+		std::vector<int> communities0(n);
 		if(use_fixed_tries)
 			communities0.assign(n, 2 - tryI);
 		else
@@ -189,7 +191,7 @@ double Split(vector< vector<double> >& Q, const vector<double>& correctionVector
 		double mod_gain1 = 1;
 		while(mod_gain1 > THRESHOLD)
 		{
-			vector<int> communitiesNew(n);
+			std::vector<int> communitiesNew(n);
 			mod_gain1 = PerformKernighansShift(Q, correctionVector, communities0, communitiesNew);
 			if(mod_gain1 > THRESHOLD)
 			{
@@ -219,17 +221,17 @@ double Split(vector< vector<double> >& Q, const vector<double>& correctionVector
 	return mod_gain;
 }
 
-void reCalc(Graph& G, vector< vector<double> >& moves, vector< vector<int> >& splits_communities, int origin, int dest)
+void reCalc(Graph& G, std::vector< std::vector<double> >& moves, std::vector< std::vector<int> >& splits_communities, int origin, int dest)
 {
 	moves[origin][dest] = 0;
 	if(origin != dest)
 	{
-		vector<int> origCommInd = G.CommunityIndices(origin);
+		std::vector<int> origCommInd = G.CommunityIndices(origin);
 		if(!origCommInd.empty())
 		{
-			vector<double> correctionVector = G.GetCorrectionVector(origCommInd, G.CommunityIndices(dest));
-			vector<int> splitComunity(origCommInd.size());
-			vector< vector<double> > Q = G.GetModularitySubmatrix(origCommInd);
+			std::vector<double> correctionVector = G.GetCorrectionVector(origCommInd, G.CommunityIndices(dest));
+			std::vector<int> splitComunity(origCommInd.size());
+			std::vector< std::vector<double> > Q = G.GetModularitySubmatrix(origCommInd);
 			moves[origin][dest] = Split(Q, correctionVector, splitComunity);
 			for(int i = 0; i < splitComunity.size(); ++i)
 				splits_communities[dest][origCommInd[i]] = splitComunity[i];
@@ -237,7 +239,7 @@ void reCalc(Graph& G, vector< vector<double> >& moves, vector< vector<int> >& sp
 	}
 }
 
-double BestGain(const vector< vector<double> >& moves, int& origin, int& dest)
+double BestGain(const std::vector< std::vector<double> >& moves, int& origin, int& dest)
 {
 	double bestGain = -1;
 	for(int i = 0; i < moves.size(); ++i)
@@ -251,7 +253,7 @@ double BestGain(const vector< vector<double> >& moves, int& origin, int& dest)
 	return bestGain;
 }
 
-void DeleteEmptyCommunities(Graph& G, vector< vector<double> >& moves, vector< vector<int> >& splits_communities, int origin)
+void DeleteEmptyCommunities(Graph& G, std::vector< std::vector<double> >& moves, std::vector< std::vector<int> >& splits_communities, int origin)
 {
 	if(G.DeleteCommunityIfEmpty(origin))
 	{
@@ -273,12 +275,12 @@ void DeleteEmptyCommunities(Graph& G, vector< vector<double> >& moves, vector< v
 void RunCombo(Graph& G, int max_comunities)
 {
 	G.CalcModMtrix();
-	G.SetCommunities(vector<int>(G.Size(), 0));
+	G.SetCommunities(std::vector<int>(G.Size(), 0));
 	double currentMod = G.Modularity();
 	printf("Initial moxdularity: %6f\n", currentMod);
-	vector< vector<double> > moves(2, vector<double>(2, 0)); //results of splitting communities
+	std::vector< std::vector<double> > moves(2, std::vector<double>(2, 0)); //results of splitting communities
 	//vectors of boolean meaning that corresponding vertex should be moved to dest
-	vector< vector<int> > splits_communities(2, vector<int>(G.Size(), 0)); //best split vectors
+	std::vector< std::vector<int> > splits_communities(2, std::vector<int>(G.Size(), 0)); //best split vectors
 
 	int origin, dest;
 	for(origin = 0; origin < G.CommunityNumber(); ++ origin)
@@ -304,8 +306,8 @@ void RunCombo(Graph& G, int max_comunities)
 			{
 				for(int i = 0; i < moves.size(); ++i)
 					moves[i].push_back(0);
-				moves.push_back(vector<double>(moves.size() + 1, 0));
-				splits_communities.push_back(vector<int>(G.Size(), 0));
+				moves.push_back(std::vector<double>(moves.size() + 1, 0));
+				splits_communities.push_back(std::vector<int>(G.Size(), 0));
 			}
 			for(int i = 0; i < dest; ++i)
 			{
@@ -328,54 +330,43 @@ void RunCombo(Graph& G, int max_comunities)
 	}
 }
 
-int main(int argc, char** argv)
+int combo(std::string fileName,
+		  int max_communities=INF,
+		  double mod_resolution=1.0,
+		  bool use_fix_tries=false,
+		  int seed=42)
 {
-	int max_comunities = INF;
-	string file_suffix = "comm_comboC++";
-	if(argc < 2)
-	{
-		cerr << "Error: provide path to edge list (.edgelist) or pajeck (.net) file" << endl;
-		return -1;
-	}
-	if(argc > 2)
-	{
-		if(string(argv[2]) != "INF")
-		max_comunities = atoi(argv[2]);
-	}
-	if(argc > 3) 
-	{
-		mod_resolution = atof(argv[3]);
-	}
-	if(argc > 4) 
-	{
-		file_suffix = argv[4];
-	}
-	if(argc > 5)
-		use_fixed_tries = atoi(argv[5]);  // ?
 
-
-	string fileName = argv[1];
-	srand(time(0));
+	srand(seed);
 
 	Graph G;
-	string ext = fileName.substr(fileName.rfind('.'), fileName.length() - fileName.rfind('.'));
+	std::string ext = fileName.substr(fileName.rfind('.'), fileName.length() - fileName.rfind('.'));
 	if(ext == ".edgelist")
 		G.ReadFromEdgelist(fileName, mod_resolution);
 	else if(ext == ".net")
 		G.ReadFromPajeck(fileName, mod_resolution);
 	if(G.Size() <= 0)
 	{
-		cerr << "Error: graph is empty" << endl;
+		// cerr << "Error: graph is empty" << std::endl;
 		return -1;
 	}
 
 	// clock_t startTime = clock();
-	RunCombo(G, max_comunities);
+	RunCombo(G, max_communities);
 
-	//cout << fileName << " " << G.Modularity() << endl;
-	//cout << "Elapsed time is " << (double(clock() - startTime)/CLOCKS_PER_SEC) << endl;
+	//cout << fileName << " " << G.Modularity() << std::endl;
+	//cout << "Elapsed time is " << (double(clock() - startTime)/CLOCKS_PER_SEC) << std::endl;
+	// std::string fileSuffix='comm_comboC++'
 
-	G.PrintCommunity(fileName.substr(0, fileName.rfind('.')) + "_" + file_suffix + ".txt");
-	cout << G.Modularity() << endl;
-	return 0;
+	G.PrintCommunity(fileName.substr(0, fileName.rfind('.')) + "_comm_comboC++.txt");
+	// cout << G.Modularity() << std::endl;
+	return G.Modularity();
+}
+
+
+PYBIND11_MODULE(combo, m) {
+    m.doc() = "combo partition Python binding"; // optional module docstring
+
+    // m.def("run_combo", &RunCombo, "execute combo partition on graph");
+	m.def("execute", &combo, "execute combo partition on graph");
 }

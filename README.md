@@ -57,4 +57,12 @@ All copiryghts and licensing is same as covered in the initial package
 
 - pyCombo does not work on graph of N=1
 - pyCombo for some reason always split the network into 2, even for the complete graph
-- binaries are now pulled from https://github.com/Express50/Combo/blob/master/Main.cpp, which fixes a few bugs and passes 
+- binaries are now pulled from https://github.com/Express50/Combo/blob/master/Main.cpp, which fixes a few bugs and passes
+
+# Development
+this section is for contributors and
+## Build
+run `poetry build` in order to combile binaries and package the code.
+
+## Links and resources
+- [How to build C extension in poetry](https://stackoverflow.com/questions/60073711/how-to-build-c-extensions-via-poetry)

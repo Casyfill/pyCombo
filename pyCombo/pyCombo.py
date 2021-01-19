@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import division, absolute_import
-import subprocess
+
+# import subprocess
 # import os
 import logging
 import tempfile
 from pathlib import Path
 from typing import Optional
+import pycombo.combo as ccombo
 
 __author__ = "Philipp Kats"
 __copyright__ = "Philipp Kats"
@@ -76,20 +78,24 @@ def getComboPartition(
             max_number_of_communities = "INF"
 
         # RUN COMBO
-        commands = [
-            str(directory / "pyCombo/comboCPP"),
-            f.name,
-            max_number_of_communities,
-            str(mod_resolution),
-            "temp_partition",  # file_suffix
-        ]
+        # commands = [
+        #     str(directory / "combo" / "comboCPP"),
+        #     f.name,
+        #     max_number_of_communities,
+        #     str(mod_resolution),
+        #     "temp_partition",  # file_suffix
+        # ]
 
-        logger.info(f'Executing command: `{" ".join(commands)}`')
-        out = subprocess.Popen(
-            commands, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        # logger.info(f'Executing command: `{" ".join(commands)}`')
+        # out = subprocess.Popen(
+        #     commands, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        # )
+        result = ccombo.execute(
+            f.name, max_number_of_communities, str(mod_resolution), "temp_parititon"
         )
-
-        stdout, stderr = out.communicate()
+        logger.info(result)
+        stdout, stderr = result
+        # stdout, stderr = out.communicate()
         logger.debug(f"STDOUT: {stdout}")
         if stderr is not None:
             raise Exception(f"STDERR: {stderr}")  # TODO: setup c++ to throw stderr

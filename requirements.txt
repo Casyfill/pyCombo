@@ -1,3 +1,2 @@
 # Add your requirements here like:
-# networkx
-
+pybind11 = "^2.6.1"

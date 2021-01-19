@@ -1,12 +1,12 @@
-from distutils.command.build_ext import build_ext
+# from distutils.command.build_ext import build_ext
 from distutils.core import Extension
 from distutils.errors import CCompilerError, DistutilsExecError, DistutilsPlatformError
+from pybind11.setup_helpers import Pybind11Extension, build_ext
 
 
 ext_modules = [
-    Extension(
-        "pyCombo.comboCPP",
-        include_dirs=["./src"],
+    Pybind11Extension(
+        "pycombo.combo",
         sources=["src/Main.cpp", "src/Graph.cpp"],
     ),
 ]
