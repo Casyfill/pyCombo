@@ -102,7 +102,7 @@ def getComboPartition(
             random_seed=random_seed
         )
 
-        logger.info(f"Result: {result}" )
+        logger.info(f"Result: {result}")
         stdout, stderr = result
         # stdout, stderr = out.communicate()
         logger.debug(f"STDOUT: {stdout}")
