@@ -20,7 +20,7 @@ def _partitionGroup(p):
 @pytest.mark.parametrize("n", [3, 4, 5, 10])
 def test_fileojb_write_graph(n):
     import tempfile
-    from pycombo.pyCombo import _fileojb_write_graph
+    from pyCombo.pyCombo import _fileojb_write_graph
     import networkx as nx
 
     test_graph = nx.complete_graph(n)
@@ -44,7 +44,7 @@ def test_fileojb_write_graph(n):
 
 
 def test_errors():
-    from pycombo import combo
+    from pyCombo import combo
     import networkx as nx
 
     graph = nx.Graph()  # empty

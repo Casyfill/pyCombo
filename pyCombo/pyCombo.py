@@ -8,7 +8,7 @@ import logging
 import tempfile
 from pathlib import Path
 from typing import Optional
-import pycombo.combo as ccombo
+import pyCombo.combo as ccombo
 
 __author__ = "Philipp Kats"
 __copyright__ = "Philipp Kats"

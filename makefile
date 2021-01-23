@@ -1,2 +1,3 @@
 test:
-	python -m pytest tests/
+	poetry install
+	poetry run pytest tests/
