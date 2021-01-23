@@ -8,7 +8,6 @@ import logging
 import tempfile
 from pathlib import Path
 from typing import Optional
-import math
 import pyCombo.combo as ccombo
 
 __author__ = "Philipp Kats"
@@ -54,11 +53,12 @@ def _fileojb_write_graph(f, G, weight=None) -> dict:
 
 
 def getComboPartition(
-    G, max_communities:int=-1,
+    G,
+    max_communities: int = -1,
     mod_resolution: int = 1,
     weight_prop: Optional[str] = None,
-    use_fix_tries:bool = False,
-    random_seed:int = 42
+    use_fix_tries: bool = False,
+    random_seed: int = 42,
 ):
     """
     calculates Combo Partition using Combo C++ script
@@ -99,7 +99,7 @@ def getComboPartition(
             max_communities=max_communities,
             mod_resolution=mod_resolution,
             use_fix_tries=use_fix_tries,
-            random_seed=random_seed
+            random_seed=random_seed,
         )
 
         logger.info(f"Result: {result}")
