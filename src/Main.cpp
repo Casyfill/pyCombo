@@ -331,13 +331,17 @@ void RunCombo(Graph& G, int max_comunities)
 }
 
 int combo(std::string fileName,
-		  int max_communities=INF,
+		  int max_communities=-1,
 		  double mod_resolution=1.0,
 		  bool use_fix_tries=false,
-		  int seed=42)
+		  int random_seed=42)
 {
 
-	srand(seed);
+	srand(random_seed);
+
+	if(max_communities== -1)
+		printf("MAX_COMMUNITIES SET TO: INF\n");
+		max_communities = INF;
 
 	Graph G;
 	std::string ext = fileName.substr(fileName.rfind('.'), fileName.length() - fileName.rfind('.'));
@@ -368,5 +372,7 @@ PYBIND11_MODULE(combo, m) {
     m.doc() = "combo partition Python binding"; // optional module docstring
 
     // m.def("run_combo", &RunCombo, "execute combo partition on graph");
-	m.def("execute", &combo, "execute combo partition on graph");
+	m.def("execute", &combo, "execute combo partition on graph",
+		py::arg("graph_path"), py::arg("max_communities"), py::arg("mod_resolution"), py::arg("use_fix_tries"), py::arg("random_seed")
+		);
 }

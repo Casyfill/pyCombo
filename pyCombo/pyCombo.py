@@ -8,6 +8,7 @@ import logging
 import tempfile
 from pathlib import Path
 from typing import Optional
+import math
 import pyCombo.combo as ccombo
 
 __author__ = "Philipp Kats"
@@ -53,16 +54,22 @@ def _fileojb_write_graph(f, G, weight=None) -> dict:
 
 
 def getComboPartition(
-    G, max_number_of_communities="INF", mod_resolution: int = 1, weight_prop: str = None
+    G, max_communities:int=-1,
+    mod_resolution: int = 1,
+    weight_prop: Optional[str] = None,
+    use_fix_tries:bool = False,
+    random_seed:int = 42
 ):
     """
     calculates Combo Partition using Combo C++ script
     all details here: https://github.com/Casyfill/pyCOMBO
 
     G - NetworkX graph
-    max_number_of_communities - maximum number of partitions, by defeult infinite
-    weight - graph edges weight property. If None, graph assumed to be unweighted
-
+    max_communities - maximum number of partitions. If none, assume to be infinite
+    mod_resolution
+    weight_prop - graph edges property to use as weights. If None, graph assumed to be unweighted
+    use_fix_tries: bool
+    random_seedd:int Random seed to use
 
     #### NOTE: code generates temporary partitioning file
     """
@@ -73,9 +80,6 @@ def getComboPartition(
     with tempfile.TemporaryDirectory(dir=directory) as tmpdir:
         with open(f"{tmpdir}/temp_graph.net", "w") as f:
             nodes = _fileojb_write_graph(f, G, weight=weight_prop)
-
-        if max_number_of_communities is None:
-            max_number_of_communities = "INF"
 
         # RUN COMBO
         # commands = [
@@ -91,9 +95,14 @@ def getComboPartition(
         #     commands, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
         # )
         result = ccombo.execute(
-            f.name, max_number_of_communities, str(mod_resolution), "temp_parititon"
+            graph_path=f.name,
+            max_communities=max_communities,
+            mod_resolution=mod_resolution,
+            use_fix_tries=use_fix_tries,
+            random_seed=random_seed
         )
-        logger.info(result)
+
+        logger.info(f"Result: {result}" )
         stdout, stderr = result
         # stdout, stderr = out.communicate()
         logger.debug(f"STDOUT: {stdout}")

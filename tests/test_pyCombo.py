@@ -44,16 +44,16 @@ def test_fileojb_write_graph(n):
 
 
 def test_errors():
-    from pyCombo import combo
+    from pyCombo.pyCombo import getComboPartition
     import networkx as nx
 
     graph = nx.Graph()  # empty
     with pytest.raises(ValueError):
-        combo.execute(graph)
+        getComboPartition(graph)
 
     # wrong value, number
     with pytest.raises(ValueError):
-        combo.execute(42, weight_prop="weight")
+        getComboPartition(42, weight_prop="weight")
 
 
 # @pytest.mark.parametrize('full_graph_size', [2,3, 10, 100])

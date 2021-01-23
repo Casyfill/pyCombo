@@ -18,5 +18,5 @@ def test_modularity_test_graph(test_graph):
 def test_modularity_karate(karate):
     from pyCombo.pyCombo import getComboPartition
 
-    _, modularity_ = getComboPartition(karate)
-    assert modularity_ == 0.437212
+    result = getComboPartition(karate)
+    assert result[1] == 0.437212, result
