@@ -1,8 +1,8 @@
-/*                                                                            
+/*
     Copyright 2014
     Alexander Belyi <alexander.belyi@gmail.com>,
-    Stanislav Sobolevsky <stanly@mit.edu>                                               
-                                                                            
+    Stanislav Sobolevsky <stanly@mit.edu>
+
     This file is part of Combo algorithm.
 
     Combo is free software: you can redistribute it and/or modify
@@ -84,7 +84,7 @@ void Graph::FillModMatrix(const vector<int>& src, const vector<int>& dst, const 
 		m_modMatrix[src[i]-m][dst[i]-m] += weight[i] / m_totalWeight;
 		if(!m_isOriented)
 			m_modMatrix[dst[i]-m][src[i]-m] += weight[i] / m_totalWeight;
-	
+
 		sumQ1[src[i]-m] += weight[i] / m_totalWeight;
 		sumQ2[dst[i]-m] += weight[i] / m_totalWeight;
 		if(!m_isOriented)
@@ -188,7 +188,7 @@ void Graph::CalcModMtrix()
 	for(int i = 0; i < m_size; ++i)
 		for(int j = 0; j < m_size; ++j)
 			m_modMatrix[i][j] = EdgeWeight(i, j) / m_totalWeight;
-	
+
 	vector<double> sumQ2(m_size, 0.0);
 	vector<double> sumQ1(m_size, 0.0);
 	for(int i = 0; i < m_size; ++i)
@@ -225,6 +225,12 @@ void Graph::Print() const
 		}
 		cout << endl;
 	}
+}
+
+void Graph::PrintCommunityStr() const
+{
+	for(int i = 0; i < m_size; ++i)
+		cout << m_communities[i] << endl;
 }
 
 void Graph::PrintCommunity(const string& fileName) const

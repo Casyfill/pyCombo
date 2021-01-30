@@ -27,7 +27,7 @@
 #include <cmath>
 #include <iostream>
 #include <algorithm>
-// using namespace std;
+using namespace std;
 
 namespace py = pybind11;
 
@@ -330,7 +330,7 @@ void RunCombo(Graph& G, int max_comunities)
 	}
 }
 
-int combo(std::string fileName,
+double combo(std::string fileName,
 		  int max_communities=-1,
 		  double mod_resolution=1.0,
 		  bool use_fix_tries=false,
@@ -362,8 +362,10 @@ int combo(std::string fileName,
 	//cout << "Elapsed time is " << (double(clock() - startTime)/CLOCKS_PER_SEC) << std::endl;
 	// std::string fileSuffix='comm_comboC++'
 
-	G.PrintCommunity(fileName.substr(0, fileName.rfind('.')) + "_comm_comboC++.txt");
+	// G.PrintCommunity(fileName.substr(0, fileName.rfind('.')) + "_comm_comboC++.txt");
 	// cout << G.Modularity() << std::endl;
+	// printf("Modularity: %6f\n", G.Modularity());
+	// return std::make_tuple(G.PrintCommunityStr(), G.Modularity());
 	return G.Modularity();
 }
 

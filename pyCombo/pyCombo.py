@@ -28,8 +28,10 @@ def _check_repr(G):
         raise ValueError("Graph is empty")
 
 
-def _fileojb_write_graph(f, G, weight=None) -> dict:
-
+def _fileojb_write_graph(f, G, weight: Optional[str] = None) -> dict:
+    """write Graph to file as .net Network text file
+    Returns dictionary of Nodes
+    """
     nodenum, nodes = {}, {}
 
     f.write(f"*Vertices {len(G.nodes())}\n")
@@ -47,8 +49,7 @@ def _fileojb_write_graph(f, G, weight=None) -> dict:
             f.write(f"{nodenum[e[0]]} {nodenum[e[1]]} 1\n")
     f.flush()
 
-    cnt = 1 + len(G.edges())
-    logger.debug(f"Wrote Graph to `{f.name}` ({cnt} lines)")
+    logger.debug(f"Wrote Graph to `{f.name}`")
     return nodes
 
 
@@ -79,7 +80,7 @@ def getComboPartition(
 
     with tempfile.TemporaryDirectory(dir=directory) as tmpdir:
         with open(f"{tmpdir}/temp_graph.net", "w") as f:
-            nodes = _fileojb_write_graph(f, G, weight=weight_prop)
+            _ = _fileojb_write_graph(f, G, weight=weight_prop)
 
         # RUN COMBO
         # commands = [
@@ -102,22 +103,23 @@ def getComboPartition(
             random_seed=random_seed,
         )
 
-        logger.info(f"Result: {result}")
-        stdout, stderr = result
-        # stdout, stderr = out.communicate()
-        logger.debug(f"STDOUT: {stdout}")
-        if stderr is not None:
-            raise Exception(f"STDERR: {stderr}")  # TODO: setup c++ to throw stderr
+        logger.debug(f"Result: {result}")
+        return result
+        # stdout, stderr = result
+        # # stdout, stderr = out.communicate()
+        # logger.debug(f"STDOUT: {stdout}")
+        # if stderr is not None:
+        #     raise Exception(f"STDERR: {stderr}")  # TODO: setup c++ to throw stderr
 
-        try:
-            modularity_ = float(stdout)
-        except Exception as e:
-            raise Exception(stdout, e)
+        # try:
+        #     modularity_ = float(stdout)
+        # except Exception as e:
+        #     raise Exception(stdout, e)
 
-        # READ RESULTING PARTITON
-        with open(f"{tmpdir}/temp_graph_temp_partition.txt", "r") as f:
-            partition = {nodes[i]: int(line) for i, line in enumerate(f)}
-            return partition, modularity_
+        # # READ RESULTING PARTITON
+        # with open(f"{tmpdir}/temp_graph_temp_partition.txt", "r") as f:
+        #     partition = {nodes[i]: int(line) for i, line in enumerate(f)}
+        #     return partition, modularity_
 
 
 def modularity(G, partition, key: Optional[str] = None):

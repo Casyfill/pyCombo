@@ -1,8 +1,8 @@
-/*                                                                            
+/*
     Copyright 2014
     Alexander Belyi <alexander.belyi@gmail.com>,
-    Stanislav Sobolevsky <stanly@mit.edu>                                               
-                                                                            
+    Stanislav Sobolevsky <stanly@mit.edu>
+
     This file is part of Combo algorithm.
 
     Combo is free software: you can redistribute it and/or modify
@@ -43,7 +43,7 @@ public:
 	double Modularity() const;
 	std::vector< std::vector<double> > GetModularitySubmatrix(const std::vector<int>& indices) const;
 	std::vector<double> GetCorrectionVector(const std::vector<int>& origCommInd, const std::vector<int>& destCommInd) const;
-	
+
 	void SetCommunities(const std::vector<int>& new_communities, int number = -1);
 	std::vector<int> Communities() const {return m_communities;};
 	std::vector<int> CommunityIndices(int comm) const;
@@ -51,6 +51,7 @@ public:
 	void PerformSplit(int origin, int dest, const std::vector<int>& split_communities);
 	bool DeleteCommunityIfEmpty(int comm);
 	void Print() const;
+	void PrintCommunityStr() const;
 	void PrintCommunity(const std::string& fileName) const;
 
 private:
@@ -66,4 +67,3 @@ private:
 	std::vector<std::vector<double> > m_modMatrix;
 	std::vector<int> m_communities;
 };
-
