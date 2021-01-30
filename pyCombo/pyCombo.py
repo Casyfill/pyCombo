@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import division, absolute_import
+from io import TextIOWrapper
 
 # import subprocess
 # import os
@@ -28,7 +29,7 @@ def _check_repr(G):
         raise ValueError("Graph is empty")
 
 
-def _fileojb_write_graph(f, G, weight: Optional[str] = None) -> dict:
+def _fileojb_write_graph(f: TextIOWrapper, G, weight: Optional[str] = None) -> dict:
     """write Graph to file as .net Network text file
     Returns dictionary of Nodes
     """
@@ -82,19 +83,6 @@ def getComboPartition(
         with open(f"{tmpdir}/temp_graph.net", "w") as f:
             _ = _fileojb_write_graph(f, G, weight=weight_prop)
 
-        # RUN COMBO
-        # commands = [
-        #     str(directory / "combo" / "comboCPP"),
-        #     f.name,
-        #     max_number_of_communities,
-        #     str(mod_resolution),
-        #     "temp_partition",  # file_suffix
-        # ]
-
-        # logger.info(f'Executing command: `{" ".join(commands)}`')
-        # out = subprocess.Popen(
-        #     commands, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-        # )
         result = ccombo.execute(
             graph_path=f.name,
             max_communities=max_communities,

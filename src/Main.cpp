@@ -277,7 +277,7 @@ void RunCombo(Graph& G, int max_comunities)
 	G.CalcModMtrix();
 	G.SetCommunities(std::vector<int>(G.Size(), 0));
 	double currentMod = G.Modularity();
-	printf("Initial moxdularity: %6f\n", currentMod);
+	// printf("Initial moxdularity: %6f\n", currentMod);
 	std::vector< std::vector<double> > moves(2, std::vector<double>(2, 0)); //results of splitting communities
 	//vectors of boolean meaning that corresponding vertex should be moved to dest
 	std::vector< std::vector<int> > splits_communities(2, std::vector<int>(G.Size(), 0)); //best split vectors
@@ -340,7 +340,7 @@ double combo(std::string fileName,
 	srand(random_seed);
 
 	if(max_communities== -1)
-		printf("MAX_COMMUNITIES SET TO: INF\n");
+		// printf("MAX_COMMUNITIES SET TO: INF\n");
 		max_communities = INF;
 
 	Graph G;
@@ -364,7 +364,7 @@ double combo(std::string fileName,
 
 	// G.PrintCommunity(fileName.substr(0, fileName.rfind('.')) + "_comm_comboC++.txt");
 	// cout << G.Modularity() << std::endl;
-	// printf("Modularity: %6f\n", G.Modularity());
+	printf("Modularity: %6f\n", G.Modularity());
 	// return std::make_tuple(G.PrintCommunityStr(), G.Modularity());
 	return G.Modularity();
 }
