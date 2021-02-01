@@ -377,7 +377,7 @@ std::tuple< vector<int>, double> combo(std::string fileName,
 	// G.PrintCommunity(fileName.substr(0, fileName.rfind('.')) + "_comm_comboC++.txt");
 	// cout << G.Modularity() << std::endl;
 
-	printf("Modularity: %6f\n", G.Modularity());
+	// printf("Modularity: %6f\n", G.Modularity());
 	// s.modularity = G.Modularity();
 	// s.communities = G.m_communities;
 	// return s;

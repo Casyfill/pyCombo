@@ -44,8 +44,10 @@ def _fileojb_write_graph(f: TextIOWrapper, G, weight: Optional[str] = None) -> d
     f.write("*Arcs\n")
 
     for e in G.edges(data=True):
+        # NOTE: potential place for speedup if data=False
         if weight is not None:
-            f.write(f"{nodenum[e[0]]} {nodenum[e[1]]} {nodenum[e[2][weight]]}\n")
+            # weight_value =
+            f.write(f"{nodenum[e[0]]} {nodenum[e[1]]} {e[2].get(weight, 1)}\n")
         else:
             f.write(f"{nodenum[e[0]]} {nodenum[e[1]]} 1\n")
     f.flush()

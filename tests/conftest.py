@@ -27,7 +27,14 @@ def test_graph():
 
 
 @pytest.fixture(scope="function")
-def karate():
+def karate() -> nx.Graph:
     import networkx as nx
 
     return nx.karate_club_graph()
+
+
+@pytest.fixture(scope="session")
+def relaxed_caveman() -> nx.Graph:
+    import networkx as nx
+
+    return nx.relaxed_caveman_graph(100, 10, p=0.1, seed=42)
