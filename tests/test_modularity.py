@@ -33,13 +33,13 @@ def test_relaxed_caveman(relaxed_caveman, benchmark):
     assert len(partition) == len(relaxed_caveman)
 
 
-def test_modularity_test_graph(test_graph, benchmark):
-    from pyCombo.pyCombo import getComboPartition
+# def test_modularity_test_graph(test_graph, benchmark):
+#     from pyCombo.pyCombo import getComboPartition
 
-    partition, modularity = benchmark(
-        getComboPartition, test_graph, weight_prop="weight", random_seed=42
-    )
+#     partition, modularity = benchmark(
+#         getComboPartition, test_graph, weight_prop="weight", random_seed=42
+#     )
 
-    assert isinstance(partition, list)
-    assert len(partition) == len(test_graph)
-    assert modularity == pytest.approx(0.16, 0.0001)
+#     assert isinstance(partition, list)
+#     assert len(partition) == len(test_graph)
+#     assert modularity == pytest.approx(0.16, 0.0001)
