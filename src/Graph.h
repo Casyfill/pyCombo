@@ -40,6 +40,9 @@ public:
 	double EdgeWeight(int i, int j) const;
 	bool IsCommunityEmpty(int comm) const;
 
+	int m_size;
+	std::vector<int> m_communities;
+
 	double Modularity() const;
 	std::vector< std::vector<double> > GetModularitySubmatrix(const std::vector<int>& indices) const;
 	std::vector<double> GetCorrectionVector(const std::vector<int>& origCommInd, const std::vector<int>& destCommInd) const;
@@ -51,7 +54,7 @@ public:
 	void PerformSplit(int origin, int dest, const std::vector<int>& split_communities);
 	bool DeleteCommunityIfEmpty(int comm);
 	void Print() const;
-	void PrintCommunityStr() const;
+
 	void PrintCommunity(const std::string& fileName) const;
 
 private:
@@ -59,11 +62,11 @@ private:
 	void FillModMatrix(const std::vector<int>& src, const std::vector<int>& dst, const std::vector<double>& weight, double mod_resolution);
 
 private:
-	int m_size;
+
 	double m_totalWeight;
 	int m_communityNumber;
 	bool m_isOriented;
 	std::vector<std::vector<double> > m_matrix;
 	std::vector<std::vector<double> > m_modMatrix;
-	std::vector<int> m_communities;
+
 };

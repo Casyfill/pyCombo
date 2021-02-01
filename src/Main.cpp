@@ -19,6 +19,7 @@
     along with Combo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include <ctime>
 #include <cstdio>
 
@@ -330,14 +331,22 @@ void RunCombo(Graph& G, int max_comunities)
 	}
 }
 
-double combo(std::string fileName,
+// struct comboResult {
+//     double modularity;
+// 	std::vector<int> communities;
+// };
+
+// typedef struct comboResult Struct;
+
+std::tuple< vector<int>, double> combo(std::string fileName,
 		  int max_communities=-1,
 		  double mod_resolution=1.0,
 		  bool use_fix_tries=false,
 		  int random_seed=42)
 {
-
+	// Struct s;
 	srand(random_seed);
+
 
 	if(max_communities== -1)
 		// printf("MAX_COMMUNITIES SET TO: INF\n");
@@ -351,8 +360,11 @@ double combo(std::string fileName,
 		G.ReadFromPajeck(fileName, mod_resolution);
 	if(G.Size() <= 0)
 	{
-		// cerr << "Error: graph is empty" << std::endl;
-		return -1;
+		cerr << "Error: graph is empty" << std::endl;
+		return std::make_tuple(vector<int>(), -1.0);
+		// s.modularity = -1.0;
+		// s.communities = vector<int>();
+		// return s;
 	}
 
 	// clock_t startTime = clock();
@@ -364,9 +376,13 @@ double combo(std::string fileName,
 
 	// G.PrintCommunity(fileName.substr(0, fileName.rfind('.')) + "_comm_comboC++.txt");
 	// cout << G.Modularity() << std::endl;
+
 	printf("Modularity: %6f\n", G.Modularity());
-	// return std::make_tuple(G.PrintCommunityStr(), G.Modularity());
-	return G.Modularity();
+	// s.modularity = G.Modularity();
+	// s.communities = G.m_communities;
+	// return s;
+	return std::make_tuple(G.m_communities, G.Modularity());
+
 }
 
 

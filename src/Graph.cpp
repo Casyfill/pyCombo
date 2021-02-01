@@ -227,11 +227,6 @@ void Graph::Print() const
 	}
 }
 
-void Graph::PrintCommunityStr() const
-{
-	for(int i = 0; i < m_size; ++i)
-		cout << m_communities[i] << endl;
-}
 
 void Graph::PrintCommunity(const string& fileName) const
 {

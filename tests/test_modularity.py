@@ -13,14 +13,20 @@ def test_modularity_karate(karate):
 
     from pyCombo.pyCombo import getComboPartition
 
-    result = getComboPartition(karate, random_seed=42)
-    assert result == pytest.approx(0.437212, 0.0001), result
+    partition, modularity = getComboPartition(karate, random_seed=42)
+
+    assert isinstance(partition, list)
+    assert len(partition) == len(karate.nodes())
+
+    assert modularity == pytest.approx(0.437212, 0.0001), modularity
 
 
 def test_modularity_test_graph(test_graph):
     from pyCombo.pyCombo import getComboPartition
 
-    result = getComboPartition(test_graph, weight_prop="weight", random_seed=42)
-    # assert isinstance(result, tuple)
-    modularity_ = result
-    assert modularity_ == pytest.approx(0.16, 0.0001)
+    partition, modularity = getComboPartition(
+        test_graph, weight_prop="weight", random_seed=42
+    )
+    assert isinstance(partition, list)
+    assert len(partition) == len(test_graph.nodes())
+    assert modularity == pytest.approx(0.16, 0.0001)
