@@ -174,28 +174,28 @@ void Graph::ReadFromPajeck(const std::string& fname, double mod_resolution)
 	FillModMatrix(src, dst, weight, mod_resolution);
 }
 
-void ReadFromArrays(    std::vector< std::vector<int> >& networkarray,
-						std::vector<double>& weights,
-						double mod_resolution,
-						bool directed=false,
-						)
+void ReadFromArrays(std::vector< std::vector<int> >& networkarray,
+					std::vector<double>& weights,
+					double mod_resolution,
+					bool directed)
 {
 	vector<int> src, dst;
 	vector<double> weight;
-	bool weighted = (weights.length() > 0);
+	bool weighted = (weights.size() > 0);
 	double w = 1.0;
 
 	m_isOriented = directed;
-	m_size = networkarray.length();
+	m_size = networkarray.size();
 
 
-	for(int i = 0; i < m_size; ++i){
+	for(int i = 0; i < networkarray.size(); ++i){
 
-		src.push_back(networkarray[i][0]);
-		dst.push_back(networkarray[i][1]);
+		src.push_back(networkarray[i][0]); // source node id
+		dst.push_back(networkarray[i][1]); // dest node id
 
-		if weighted:
-			w = weights[i]
+		if(weighted==true){
+			w = weights[i];
+		}
 
 		weight.push_back(w);
 		m_totalWeight += w;
