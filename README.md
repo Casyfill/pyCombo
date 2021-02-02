@@ -1,16 +1,21 @@
 # pyCOMBO
-[![Build Status](https://travis-ci.org/Casyfill/pyCOMBO.svg?branch=master)](https://travis-ci.org/Casyfill/pyCOMBO)
-[![Coverage Status](https://coveralls.io/repos/github/Casyfill/pyCombo/badge.svg?branch=master)](https://coveralls.io/github/Casyfill/pyCombo?branch=master)
+![CI](https://github.com/Casyfill/pyCombo/workflows/CI/badge.svg)
 
-**THis is the initial commit, not release version. any code shared AS IS**
+Python wrapper around C++ implementation of the [network] community detection algorithm called "Combo".
 
-This is a python wrapper around C++ implementation (for Modularity maximization) of the community detection algorithm called "Combo" described in the paper "General optimization technique for high-quality community detection in complex networks" by Stanislav Sobolevsky, Riccardo Campari, Alexander Belyi and Carlo Ratti.
+Details of the algorythm are described in the paper "General optimization technique for high-quality community detection in the paper:
 
-![Portugal cellular talks partition](http://senseable.mit.edu/community_detection/img/portugal_img.png)
-
-"Combo" algorithm for community detection  described in the paper:
 
 	Sobolevsky S., Campari R., Belyi A., and Ratti C. "General optimization technique for high-quality community detection in complex networks" Phys. Rev. E 90, 012811
+
+## Installation
+for now, use:
+```bash
+python -m pip install https://github.com/Casyfill/pyCombo/archive/pybind11.tar.gz
+```
+## Dependencies
+
+*pyCombo* does not have any dependency, yet it was created having [NetworkX](https://networkx.github.io/) module in mind.
 
 ## Why Combo?
 
@@ -18,13 +23,6 @@ This is a python wrapper around C++ implementation (for Modularity maximization)
 
 Combo achieves hight quality of partitioning, while being less greedy in terms of computation, than other algorithms.
 
-## Installation
-
-`pip install -e git+git@github.com:Casyfill/pyCombo.git@master#egg=pyCombo`
-
-## Dependency
-
-*pyCombo* does not have any dependency, yet it was created having [NetworkX](https://networkx.github.io/) module in mind.
 
 
 ## More information
@@ -35,22 +33,24 @@ Combo achieves hight quality of partitioning, while being less greedy in terms o
 ## Licensing
 All copiryghts and licensing is same as covered in the initial package
 
-## Roadmap
+##E Roadmap
 
 - [x] Initial release ASIS
 - [x] Tests, Travis Ci, Coveralls
 - [x] Package delivery, setup.py
 - [x] Installation via pip
 - [x] unweighted graph
-- [ ] switched to Github Actions
-- [ ] switch to poetry
-- [ ] check & test modularity
-- [ ] assert reproductibility
+- [x] switched to Github Actions
+- [x] switch to poetry
+- [x] assert reproductibility (random seed)
+- [x] setup pybind11 binding
+- [ ] performance (speed) benchmarks
+- [ ] full testing
 - [ ] understand 2 partitions issue/reason
 - [ ] directed graph
 - [ ] Exceptions
-
-
+- [ ] Logging
+- [ ] Two Communities minumum
 
 
 # Notes and issues
@@ -62,7 +62,8 @@ All copiryghts and licensing is same as covered in the initial package
 # Development
 this section is for contributors and
 ## Build
-run `poetry build` in order to combile binaries and package the code.
+run `poetry install` in order to build local (dev) code. It will
+be installed in editable mode within poetry environment
 
 ## Links and resources
 - [How to build C extension in poetry](https://stackoverflow.com/questions/60073711/how-to-build-c-extensions-via-poetry)
