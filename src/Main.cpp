@@ -18,8 +18,7 @@
     You should have received a copy of the GNU General Public License
     along with Combo.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
+
 #include <ctime>
 #include <cstdio>
 
@@ -29,8 +28,6 @@
 #include <iostream>
 #include <algorithm>
 using namespace std;
-
-namespace py = pybind11;
 
 //settings
 const bool debug_verify = false;
@@ -329,68 +326,4 @@ void RunCombo(Graph& G, int max_comunities)
 		DeleteEmptyCommunities(G, moves, splits_communities, origin); //remove origin community if empty
 		best_gain = BestGain(moves, origin, dest);
 	}
-}
-
-// struct comboResult {
-//     double modularity;
-// 	std::vector<int> communities;
-// };
-
-// typedef struct comboResult Struct;
-
-std::tuple< vector<int>, double> combo(std::string fileName,
-		  int max_communities=-1,
-		  double mod_resolution=1.0,
-		  bool use_fix_tries=false,
-		  int random_seed=42)
-{
-	// Struct s;
-	srand(random_seed);
-
-
-	if(max_communities== -1)
-		// printf("MAX_COMMUNITIES SET TO: INF\n");
-		max_communities = INF;
-
-	Graph G;
-	std::string ext = fileName.substr(fileName.rfind('.'), fileName.length() - fileName.rfind('.'));
-	if(ext == ".edgelist")
-		G.ReadFromEdgelist(fileName, mod_resolution);
-	else if(ext == ".net")
-		G.ReadFromPajeck(fileName, mod_resolution);
-	if(G.Size() <= 0)
-	{
-		cerr << "Error: graph is empty" << std::endl;
-		return std::make_tuple(vector<int>(), -1.0);
-		// s.modularity = -1.0;
-		// s.communities = vector<int>();
-		// return s;
-	}
-
-	// clock_t startTime = clock();
-	RunCombo(G, max_communities);
-
-	//cout << fileName << " " << G.Modularity() << std::endl;
-	//cout << "Elapsed time is " << (double(clock() - startTime)/CLOCKS_PER_SEC) << std::endl;
-	// std::string fileSuffix='comm_comboC++'
-
-	// G.PrintCommunity(fileName.substr(0, fileName.rfind('.')) + "_comm_comboC++.txt");
-	// cout << G.Modularity() << std::endl;
-
-	// printf("Modularity: %6f\n", G.Modularity());
-	// s.modularity = G.Modularity();
-	// s.communities = G.m_communities;
-	// return s;
-	return std::make_tuple(G.m_communities, G.Modularity());
-
-}
-
-
-PYBIND11_MODULE(combo, m) {
-    m.doc() = "combo partition Python binding"; // optional module docstring
-
-    // m.def("run_combo", &RunCombo, "execute combo partition on graph");
-	m.def("execute", &combo, "execute combo partition on graph",
-		py::arg("graph_path"), py::arg("max_communities"), py::arg("mod_resolution"), py::arg("use_fix_tries"), py::arg("random_seed")
-		);
 }

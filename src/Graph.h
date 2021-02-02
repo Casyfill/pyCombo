@@ -24,7 +24,8 @@
 #include <string>
 #include <vector>
 #include <set>
-
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 class Graph
 {
 public:
@@ -33,7 +34,13 @@ public:
 
 	void ReadFromEdgelist(const std::string& fname, double mod_resolution);
 	void ReadFromPajeck(const std::string& fname, double mod_resolution);
+
 	void CalcModMtrix();
+
+	void ReadFromArrays(std::vector< std::vector<int> >& networkarray,
+						std::vector<double>& weights,
+						double mod_resolution,
+						bool directed=false);
 
 	int Size() const {return m_size;}
 	int CommunityNumber() const {return m_communityNumber;};

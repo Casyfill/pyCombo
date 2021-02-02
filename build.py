@@ -5,7 +5,9 @@ from pybind11.setup_helpers import Pybind11Extension, build_ext
 
 
 ext_modules = [
-    Pybind11Extension("pycombo.combo", sources=["src/Main.cpp", "src/Graph.cpp"])
+    Pybind11Extension(
+        "pycombo.combo", sources=["src/Main.cpp", "src/Graph.cpp", "src/Binder.cpp"]
+    )
 ]
 
 
