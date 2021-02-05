@@ -41,7 +41,10 @@ def _fileojb_write_graph(f: TextIOWrapper, G, weight: Optional[str] = None) -> d
         nodenum[n] = i
         nodes[i] = n
 
+    if G.is_directed():
         f.write("*Arcs\n")
+    else:
+        f.write("*Edges\n")
 
     for e in G.edges(data=True):
         # NOTE: potential place for speedup if data=False
