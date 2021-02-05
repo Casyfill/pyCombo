@@ -61,24 +61,27 @@ def _fileojb_write_graph(f: TextIOWrapper, G, weight: Optional[str] = None) -> d
 
 def getComboPartition(
     G,
-    max_communities: int = -1,
-    mod_resolution: int = 1,
     weight_prop: Optional[str] = None,
-    use_fix_tries: bool = False,
-    random_seed: int = 42,
+    max_communities: int = -1,
+    modularity_resolution: int = 1,
+    num_split_attempts: int = 0,
+    fixed_split_step: int = 0,
+    random_seed: int = -1,
 ):
     """
     calculates Combo Partition using Combo C++ script
     all details here: https://github.com/Casyfill/pyCOMBO
 
     G - NetworkX graph
-    max_communities - maximum number of partitions. If none, assume to be infinite
-    mod_resolution
+    max_communities - maximum number of communities. If -1, assume to be infinite
+    modularity_resolution - modularity resolution parameter
     weight_prop - graph edges property to use as weights. If None, graph assumed to be unweighted
-    use_fix_tries: bool
-    random_seedd:int Random seed to use
+    num_split_attempts - number of split attempts. If 0, autoadjust this number automatically
+    fixed_split_step - step number to apply predifined split. If 0, use only random splits,
+        if >0 sets up the usage of 6 fixed type splits on every fixed_split_step
+    random_seedd - random seed to use
 
-    #### NOTE: code generates temporary partitioning file
+    #### NOTE: code generates temporary partition file
     """
 
     _check_repr(G)
@@ -88,11 +91,12 @@ def getComboPartition(
         with open(f"{tmpdir}/temp_graph.net", "w") as f:
             _ = _fileojb_write_graph(f, G, weight=weight_prop)
 
-        result = comboCPP.execute(
+        result = comboCPP.execute_from_file(
             graph_path=f.name,
             max_communities=max_communities,
-            mod_resolution=mod_resolution,
-            use_fix_tries=use_fix_tries,
+            modularity_resolution=modularity_resolution,
+            num_split_attempts=num_split_attempts,
+            fixed_split_step=fixed_split_step,
             random_seed=random_seed,
         )
 
@@ -108,11 +112,6 @@ def getComboPartition(
         #     modularity_ = float(stdout)
         # except Exception as e:
         #     raise Exception(stdout, e)
-
-        # # READ RESULTING PARTITON
-        # with open(f"{tmpdir}/temp_graph_temp_partition.txt", "r") as f:
-        #     partition = {nodes[i]: int(line) for i, line in enumerate(f)}
-        #     return partition, modularity_
 
 
 def modularity(G, partition, key: Optional[str] = None):

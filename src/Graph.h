@@ -1,8 +1,8 @@
-/*
-    Copyright 2014
+/*                                                                            
+    Copyright 2021
     Alexander Belyi <alexander.belyi@gmail.com>,
-    Stanislav Sobolevsky <stanly@mit.edu>
-
+    Stanislav Sobolevsky <stanly@mit.edu>                                               
+                                                                            
     This file is part of Combo algorithm.
 
     Combo is free software: you can redistribute it and/or modify
@@ -19,61 +19,69 @@
     along with Combo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#ifndef GRAPH_H
+#define GRAPH_H
 
 #include <string>
+#include <tuple>
 #include <vector>
-#include <set>
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
+
+class Graph;
+
+Graph ReadGraphFromFile(const std::string& file_name, double mod_resolution = 1);
+
+// To save memory we store only modularity matrix and keep m_matrix empty
 class Graph
 {
 public:
-	Graph(void);
-	virtual ~Graph(void);
+	explicit Graph(bool is_directed = false, double modularity_resolution = 1);
+	Graph(int size, const std::vector<int>& sources, const std::vector<int>& destinations, const std::vector<double>& weights,
+		bool is_directed, double modularity_resolution = 1);
+	Graph(int size, const std::vector<std::tuple<int, int, double>>& edges, bool is_directed, double modularity_resolution = 1);
+	Graph(const Graph& graph);
+	Graph(Graph&& graph) noexcept;
+	Graph& operator=(Graph graph);
 
-	void ReadFromEdgelist(const std::string& fname, double mod_resolution);
-	void ReadFromPajeck(const std::string& fname, double mod_resolution);
-
-	void CalcModMtrix();
-
-	void ReadFromArrays(std::vector< std::vector<int> >& networkarray,
-						std::vector<double>& weights,
-						double mod_resolution,
-						bool directed=false);
-
+	void CalcModMatrix();
 	int Size() const {return m_size;}
-	int CommunityNumber() const {return m_communityNumber;};
-	double EdgeWeight(int i, int j) const;
-	bool IsCommunityEmpty(int comm) const;
-
-	int m_size;
-	std::vector<int> m_communities;
+	int IsDirected() const {return m_is_directed;}
+	int ModularityResolution() const {return m_modularity_resolution;}
+	int NumberOfCommunities() const {return m_number_of_communities;};
+	double EdgeWeight(int u, int v) const;
+	bool IsCommunityEmpty(int community) const;
 
 	double Modularity() const;
 	std::vector< std::vector<double> > GetModularitySubmatrix(const std::vector<int>& indices) const;
-	std::vector<double> GetCorrectionVector(const std::vector<int>& origCommInd, const std::vector<int>& destCommInd) const;
-
+	std::vector<double> GetCorrectionVector(const std::vector<int>& orig_comm_ind, const std::vector<int>& dest_comm_ind) const;
+	
 	void SetCommunities(const std::vector<int>& new_communities, int number = -1);
 	std::vector<int> Communities() const {return m_communities;};
 	std::vector<int> CommunityIndices(int comm) const;
 
-	void PerformSplit(int origin, int dest, const std::vector<int>& split_communities);
-	bool DeleteCommunityIfEmpty(int comm);
+	void PerformSplit(int origin, int destination, const std::vector<int>& split_communities);
+	bool DeleteCommunityIfEmpty(int community);
 	void Print() const;
+	void PrintCommunity(const std::string& file_name) const;
 
-	void PrintCommunity(const std::string& fileName) const;
-
-private:
-	void FillMatrix(const std::vector<int>& src, const std::vector<int>& dst, const std::vector<double>& weight);
-	void FillModMatrix(const std::vector<int>& src, const std::vector<int>& dst, const std::vector<double>& weight, double mod_resolution);
+	friend void swap(Graph& left, Graph& right);
 
 private:
+	void FillMatrix(int size, const std::vector<int>& sources, const std::vector<int>& destinations, const std::vector<double>& weights);
+	void FillMatrix(int size, const std::vector<std::tuple<int, int, double>>& edges);
+	void FillModMatrix(int size, const std::vector<int>& sources, const std::vector<int>& destinations, const std::vector<double>& weights);
+	void FillModMatrix(int size, const std::vector<std::tuple<int, int, double>>& edges);
 
-	double m_totalWeight;
-	int m_communityNumber;
-	bool m_isOriented;
+private:
+	int m_size;
+	double m_total_weight;
+	int m_number_of_communities;
+	bool m_is_directed;
+	// Modularity Resolution Parameter
+	// as per Newman 2016 (https://journals.aps.org/pre/abstract/10.1103/PhysRevE.94.052315)
+	double m_modularity_resolution;
 	std::vector<std::vector<double> > m_matrix;
-	std::vector<std::vector<double> > m_modMatrix;
-
+	std::vector<std::vector<double> > m_modularity_matrix;
+	std::vector<int> m_communities;
 };
+
+#endif //GRAPH_H
