@@ -9,7 +9,7 @@ import logging
 import tempfile
 from pathlib import Path
 from typing import Optional
-import pyCombo.combo as ccombo
+import _combo as comboCPP
 
 __author__ = "Philipp Kats"
 __copyright__ = "Philipp Kats"
@@ -41,7 +41,7 @@ def _fileojb_write_graph(f: TextIOWrapper, G, weight: Optional[str] = None) -> d
         nodenum[n] = i
         nodes[i] = n
 
-    f.write("*Arcs\n")
+        f.write("*Arcs\n")
 
     for e in G.edges(data=True):
         # NOTE: potential place for speedup if data=False
@@ -85,7 +85,7 @@ def getComboPartition(
         with open(f"{tmpdir}/temp_graph.net", "w") as f:
             _ = _fileojb_write_graph(f, G, weight=weight_prop)
 
-        result = ccombo.execute(
+        result = comboCPP.execute(
             graph_path=f.name,
             max_communities=max_communities,
             mod_resolution=mod_resolution,

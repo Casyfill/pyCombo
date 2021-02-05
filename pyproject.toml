@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "pyCombo"
+name = "pycombo"
 version = "0.0.1"
 description = "Python wrapper around Combo network partitioning algorythm (C++)"
 authors = ["Philipp <casyfill@gmail.com>"]
