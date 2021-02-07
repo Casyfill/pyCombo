@@ -138,15 +138,11 @@ def modularity(G, partition, key: Optional[str] = None):
         w1 = w2 = G.degree(weight=key)
 
     # compute total network weight
-    if weighted:
-        T = 2.0 * sum([edge[2][key] for edge in G.edges(data=True)])
-    else:
-        T = 2.0 * len(G.edges())
+    total_weight = sum(dict(w1).values())
 
     M = 0  # start accumulating modularity score
     for a in nodes:
         for b in nodes:
-
             try:
                 if partition[a] == partition[b]:  # if belong to the same community
                     # get edge weight
@@ -158,7 +154,7 @@ def modularity(G, partition, key: Optional[str] = None):
                     else:
                         e = 0
                     # add modularity score for the considered edge
-                    M += e / T - w1[a] * w2[b] / (T ** 2)
+                    M += e / total_weight - w1[a] * w2[b] / (total_weight ** 2)
             except KeyError:
                 raise KeyError(a, b, partition, nodes)
     return M
