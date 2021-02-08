@@ -147,13 +147,22 @@ def modularity(
             try:
                 if partition[u] == partition[v]:  # if belong to the same community
                     # get edge weight
+                    edge_weight = 0
                     if graph.has_edge(u, v):
                         if weighted:
-                            edge_weight = graph[u][v][weight_prop]
+                            if weight_prop in graph[u][v]:
+                                edge_weight = graph[u][v][weight_prop]
+                            else:
+                                for edge in graph[u][v].values():
+                                    edge_weight += edge[weight_prop]
                         else:
-                            edge_weight = 1
-                    else:
-                        edge_weight = 0
+                            if len(graph[u][v]) == 0:
+                                edge_weight = 1
+                            else:
+                                for edge in graph[u][v].values():
+                                    edge_weight += 1
+                    if u == v:
+                        edge_weight *= 2
                     # add modularity score for the considered edge
                     modularity_score += edge_weight / total_weight - out_strenght[u] * in_strenght[v] / (total_weight ** 2)
             except KeyError:
