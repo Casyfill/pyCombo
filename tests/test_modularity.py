@@ -21,7 +21,6 @@ def test_modularity_karate(karate, benchmark):
     # import networkx as nx
     # karate = nx.karate_club_graph()
     import networkx.algorithms.community as nx_comm
-
     from pycombo.pyCombo import get_combo_partition
 
     partition, modularity = benchmark(get_combo_partition, karate, random_seed=42)
@@ -38,7 +37,7 @@ def test_modularity_karate(karate, benchmark):
 
 
 def test_relaxed_caveman(relaxed_caveman, benchmark):
-
+    import networkx.algorithms.community as nx_comm
     from pycombo.pyCombo import get_combo_partition
 
     partition, modularity = benchmark(
@@ -47,6 +46,14 @@ def test_relaxed_caveman(relaxed_caveman, benchmark):
 
     assert isinstance(partition, dict)
     assert len(partition) == len(relaxed_caveman)
+
+    comms = _comm_groups(partition)
+    networkx_modularity = nx_comm.modularity(relaxed_caveman, comms)
+
+    assert modularity == pytest.approx(networkx_modularity, 0.0001), (
+        modularity,
+        networkx_modularity,
+    )
 
 
 # def test_modularity_test_graph(test_graph, benchmark):
