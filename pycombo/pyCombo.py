@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 from typing import Optional, Tuple
-import _combo as comboCPP
+from . import _combo as comboCPP
 
 __author__ = "Philipp Kats"
 __copyright__ = "Philipp Kats"
