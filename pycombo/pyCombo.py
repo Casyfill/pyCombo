@@ -9,7 +9,7 @@ import _combo as comboCPP
 __author__ = "Philipp Kats"
 __copyright__ = "Philipp Kats"
 __license__ = "fmit"
-__all__ = ["get_combo_partition", "modularity"]
+__all__ = ["get_combo_partition"]
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +25,7 @@ def _check_repr(graph):
 
 
 def get_combo_partition(
-    graph: networkx.Graph or networkx.DiGraph or networkx.MultiGraph or networkx.MultiDiGraph or str,
+    graph,
     weight_prop: Optional[str] = None,
     max_communities: int = -1,
     modularity_resolution: int = 1,
@@ -84,7 +84,9 @@ def get_combo_partition(
             nodes[i] = n
         for edge in graph.edges(data=True):
             if weight_prop is not None:
-                edges.append((nodenum[edge[0]], nodenum[edge[1]], edge[2].get(weight_prop, 1)))
+                edges.append(
+                    (nodenum[edge[0]], nodenum[edge[1]], edge[2].get(weight_prop, 1))
+                )
             else:
                 edges.append((nodenum[edge[0]], nodenum[edge[1]], 1.0))
         community_labels, modularity = comboCPP.execute(
@@ -101,70 +103,6 @@ def get_combo_partition(
         for i, community in enumerate(community_labels):
             partition[nodes[i]] = community
     logger.debug(f"Result: {partition}, {modularity}")
-    return partition, modularity
     # TODO: setup c++ to throw stderr
 
-
-def modularity(
-    graph: networkx.Graph or networkx.DiGraph or networkx.MultiGraph or networkx.MultiDiGraph,
-    partition: dict,
-    weight_prop: Optional[str] = None
-) -> float:
-    """
-    Compute modularity of the given partition.
-
-    Parameters
-    ----------
-    G : networkx graph
-        The graph.
-    partition : dict{int : int}
-        Mapping of nodes to community labels.
-    weight_prop : str or None
-        Weight attribute.
-
-    Returns
-    -------
-    modularity : float
-        Modularity value.
-    """
-    _check_repr(graph)
-    assert len(graph.nodes()) == len(
-        partition.keys()
-    ), f"Graph got {len(graph.nodes())} nodes, partition got {len(partition.keys())}"
-    weighted = weight_prop is not None
-    nodes = graph.nodes()
-    # compute node weights
-    if graph.is_directed():
-        out_strenght = graph.out_degree(weight=weight_prop)
-        in_strenght = graph.in_degree(weight=weight_prop)
-    else:
-        out_strenght = in_strenght = graph.degree(weight=weight_prop)
-    # compute total network weight
-    total_weight = sum(dict(out_strenght).values())
-    modularity_score = 0  # start accumulating modularity score
-    for u in nodes:
-        for v in nodes:
-            try:
-                if partition[u] == partition[v]:  # if belong to the same community
-                    # get edge weight
-                    edge_weight = 0
-                    if graph.has_edge(u, v):
-                        if weighted:
-                            if weight_prop in graph[u][v]:
-                                edge_weight = graph[u][v][weight_prop]
-                            else:
-                                for edge in graph[u][v].values():
-                                    edge_weight += edge[weight_prop]
-                        else:
-                            if len(graph[u][v]) == 0:
-                                edge_weight = 1
-                            else:
-                                for edge in graph[u][v].values():
-                                    edge_weight += 1
-                    if u == v:
-                        edge_weight *= 2
-                    # add modularity score for the considered edge
-                    modularity_score += edge_weight / total_weight - out_strenght[u] * in_strenght[v] / (total_weight ** 2)
-            except KeyError:
-                raise KeyError(u, v, partition, nodes)
-    return modularity_score
+    return partition, modularity
