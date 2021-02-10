@@ -1,2 +1,0 @@
-# Add your requirements here like:
-pybind11 = "^2.6.1"
