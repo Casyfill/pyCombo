@@ -11,7 +11,7 @@ Details of the algorythm are described in the paper "General optimization techni
 ## Installation
 for now, use:
 ```bash
-python -m pip install https://github.com/Casyfill/pyCombo/archive/pybind11.tar.gz
+python -m pip install python -m pip install https://github.com/Casyfill/pyCombo/archive/master.tar.gz
 ```
 ## Dependencies
 
