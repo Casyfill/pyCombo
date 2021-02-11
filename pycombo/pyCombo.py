@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Optional, Tuple
+from typing import Optional, Union, Tuple
 import _combo as comboCPP
 
 __author__ = "Philipp Kats"
@@ -31,8 +31,9 @@ def get_combo_partition(
     modularity_resolution: int = 1,
     num_split_attempts: int = 0,
     fixed_split_step: int = 0,
+    return_modularity: bool = True,
     random_seed: int = -1,
-) -> Tuple[dict, float]:
+) -> Union[Tuple[dict, float], dict]:
     """
     Partition graph into communities using Combo algorithm.
     All details are here: https://github.com/Casyfill/pyCOMBO
