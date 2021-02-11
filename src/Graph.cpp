@@ -319,6 +319,8 @@ void Graph::FillModMatrix(int size, const std::vector<std::tuple<int, int, doubl
 		return;
 	}
 	m_size = size;
+	if (!m_is_directed)
+		m_total_weight *= 2;
 	m_modularity_matrix.assign(m_size, vector<double>(m_size, 0));
 	vector<double> sumQ2(m_size, 0.0);
 	vector<double> sumQ1(m_size, 0.0);
