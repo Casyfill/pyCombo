@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 from typing import Optional, Tuple
-import _combo as comboCPP
+import pycombo._combo as comboCPP
 
 __author__ = "Philipp Kats"
 __copyright__ = "Philipp Kats"
@@ -27,7 +27,7 @@ def _check_repr(graph):
 def get_combo_partition(
     graph,
     weight_prop: Optional[str] = 'weight',
-    max_communities: int = -1,
+     max_communities: int = -1,
     modularity_resolution: int = 1,
     num_split_attempts: int = 0,
     fixed_split_step: int = 0,
