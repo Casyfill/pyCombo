@@ -41,7 +41,7 @@ def build(setup_kwargs):
     This function is mandatory in order to build the extensions.
     """
     distribution = Distribution({"name": "pycombo", "ext_modules": ext_modules})
-    
+
     cmd = ExtBuilder(distribution)
     cmd.ensure_finalized()
     cmd.run()
