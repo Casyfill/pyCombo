@@ -17,22 +17,22 @@ def _partitionGroup(p):
     return sorted(v.values())
 
 
-@pytest.mark.parametrize("n", [3, 4, 5, 10])
-def test_fileojb_write_graph(n):
-    import tempfile
-    from pyCombo.pyCombo import _fileojb_write_graph
-    import networkx as nx
+# @pytest.mark.parametrize("n", [3, 4, 5, 10])
+# def test_fileojb_write_graph(n):
+#     import tempfile
+#     from pycombo.pyCombo import _fileojb_write_graph
+#     import networkx as nx
 
-    test_graph = nx.complete_graph(n)
-    n_edges = (n * (n - 1)) / 2
-    n_lines = 2 + n + n_edges
+#     test_graph = nx.complete_graph(n)
+#     n_edges = (n * (n - 1)) / 2
+#     n_lines = 2 + n + n_edges
 
-    with tempfile.NamedTemporaryFile("w") as tmp:
-        _ = _fileojb_write_graph(tmp, test_graph, weight=None)
+#     with tempfile.NamedTemporaryFile("w") as tmp:
+#         _ = _fileojb_write_graph(tmp, test_graph, weight=None)
 
-        with open(tmp.name, "r") as rtmp:
-            lines_list = list(rtmp.readlines())
-            assert len(lines_list) == n_lines, "".join(lines_list)
+#         with open(tmp.name, "r") as rtmp:
+#             lines_list = list(rtmp.readlines())
+#             assert len(lines_list) == n_lines, "".join(lines_list)
 
 
 # def test_basic_combo(test_graph):
@@ -44,16 +44,16 @@ def test_fileojb_write_graph(n):
 
 
 def test_errors():
-    from pyCombo import combo
+    from pycombo.pyCombo import get_combo_partition
     import networkx as nx
 
     graph = nx.Graph()  # empty
     with pytest.raises(ValueError):
-        combo(graph)
+        get_combo_partition(graph)
 
-    # number
+    # wrong value, number
     with pytest.raises(ValueError):
-        combo(42, weight_prop="weight")
+        get_combo_partition(42, weight_prop="weight")
 
 
 # @pytest.mark.parametrize('full_graph_size', [2,3, 10, 100])
