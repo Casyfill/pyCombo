@@ -106,4 +106,7 @@ def get_combo_partition(
     logger.debug(f"Result: {partition}, {modularity}")
     # TODO: setup c++ to throw stderr
 
-    return partition, modularity
+    if return_modularity:
+        return partition, modularity
+
+    return partition
