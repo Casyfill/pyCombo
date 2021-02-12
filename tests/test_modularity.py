@@ -1,10 +1,13 @@
 import pytest
 
 
-def test_cCombo():
-    from pycombo.pyCombo import comboCPP
+def test_c_import():
+    import pycombo
 
-    assert comboCPP.__doc__ == "Python binding for Combo community detection algorithm"
+    assert (
+        pycombo._combo.__doc__
+        == "Python binding for Combo community detection algorithm"
+    )
 
 
 def _comm_groups(partition: dict) -> list:
@@ -21,9 +24,9 @@ def test_modularity_karate(karate, benchmark):
     # import networkx as nx
     # karate = nx.karate_club_graph()
     import networkx.algorithms.community as nx_comm
-    from pycombo.pyCombo import get_combo_partition
+    from pycombo import execute
 
-    partition, modularity = benchmark(get_combo_partition, karate, random_seed=42)
+    partition, modularity = benchmark(execute, karate, random_seed=42)
 
     assert isinstance(partition, dict)
     assert len(partition) == len(karate)
@@ -38,11 +41,9 @@ def test_modularity_karate(karate, benchmark):
 
 def test_relaxed_caveman(relaxed_caveman, benchmark):
     import networkx.algorithms.community as nx_comm
-    from pycombo.pyCombo import get_combo_partition
+    from pycombo import execute
 
-    partition, modularity = benchmark(
-        get_combo_partition, relaxed_caveman, weight_prop="weight", random_seed=42
-    )
+    partition, modularity = benchmark(execute, relaxed_caveman, random_seed=42)
 
     assert isinstance(partition, dict)
     assert len(partition) == len(relaxed_caveman)

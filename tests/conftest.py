@@ -21,7 +21,7 @@ def test_graph():
     """test graph with known partition"""
     G = nx.Graph()
     G.add_nodes_from(range(5))
-    G.add_edges_from([(0, 1), (1, 2), (1, 3), (2, 4), (3, 4)])
+    G.add_edges_from([(0, 1), (1, 2), (2, 0), (3, 4)])
     nx.set_edge_attributes(G, 1, "weight")
     return G
 
