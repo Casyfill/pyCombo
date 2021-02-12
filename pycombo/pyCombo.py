@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 from typing import Optional, Union, Tuple
-import _combo as comboCPP
+import pycombo._combo as comboCPP
 
 __author__ = "Philipp Kats"
 __copyright__ = "Philipp Kats"
@@ -26,7 +26,7 @@ def _check_repr(graph):
 
 def get_combo_partition(
     graph,
-    weight_prop: Optional[str] = None,
+    weight_prop: Optional[str] = 'weight',
     max_communities: int = -1,
     modularity_resolution: int = 1,
     num_split_attempts: int = 0,
@@ -42,7 +42,7 @@ def get_combo_partition(
     ----------
     graph : NetworkX graph or str
         String treated as path to Pajek .net file with graph.
-    weight_prop : str, default None
+    weight_prop : str, default 'weight'
         Graph edges property to use as weights. If None, graph assumed to be unweighted.
         Unused if graph is string.
     max_communities : int, default -1
@@ -79,10 +79,10 @@ def get_combo_partition(
     else:
         _check_repr(graph)
         nodenum, nodes = {}, {}
-        edges = []
         for i, n in enumerate(graph.nodes()):
             nodenum[n] = i
             nodes[i] = n
+        edges = []
         for edge in graph.edges(data=True):
             if weight_prop is not None:
                 edges.append(
