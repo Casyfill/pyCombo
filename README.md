@@ -11,7 +11,7 @@ Details of the algorythm are described in the paper "General optimization techni
 ## Installation
 You can install current version of pycombo from github by executing
 ```bash
-python -m pip install git+https://github.com/Casyfill/pyCombo.git#edd=pycombo
+python -m pip install https://github.com/Casyfill/pyCombo/archive/master.tar.gz#egg=pycombo
 ```
 
 ## Example
