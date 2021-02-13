@@ -2,9 +2,10 @@
 # -*- coding: utf-8 -*-
 import networkx as nx
 import pytest
+from typing import Iterable
 
 
-def _partitionGroup(p: dict) -> dict:
+def _partitionGroup(p: dict) -> Iterable[list]:
     """
     get partition as label-dict
 
