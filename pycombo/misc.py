@@ -1,4 +1,7 @@
 from typing import Optional, Tuple, Dict, List
+import logging
+
+logger = logging.getLogger(__name__)
 
 nodes_ = Dict[int, int]
 edges_ = List[Tuple[int, int, float]]
@@ -71,18 +74,24 @@ def deconstruct_graph(graph, weight: Optional[str] = None) -> Tuple[nodes_, edge
     dictionary of nodes (index, name)
     and na array of edge tuples (from, to, weight)
     """
+    default_: int = 1
+
     if weight is not None:
-        if not is_weighted(graph, weight=weight):
-            raise ValueError(f"No property found: `{weight}`")
+        if is_weighted(graph, weight=weight):
+            default_ = 0
+        else:
+            logger.info(f"No property found: `{weight}`. Using as unweighted graph")
 
     nodenum, nodes = dict(), dict()
     for i, n in enumerate(graph.nodes()):
         nodenum[n] = i
         nodes[i] = n
+
     edges = []
-    for edge in graph.edges(data=True):
-        if weight is not None:
-            edges.append((nodenum[edge[0]], nodenum[edge[1]], edge[2][weight]))
-        else:
-            edges.append((nodenum[edge[0]], nodenum[edge[1]], 1.0))
+    for edge in graph.edges(
+        data=True
+    ):  # NOTE: could switch to data=False and save a few milliseconds for unweighted graph
+        edges.append(
+            (nodenum[edge[0]], nodenum[edge[1]], edge[2].get(weight, default_))
+        )
     return nodes, edges

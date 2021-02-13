@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 def execute(
     graph,
-    weight: Optional[str] = None,
+    weight: Optional[str] = "weight",
     max_communities: int = -1,
     modularity_resolution: int = 1,
     num_split_attempts: int = 0,
@@ -34,9 +34,9 @@ def execute(
     ----------
     graph : NetworkX graph, path to the file (str), or adjacency matrix (numpy 2d array or list of lists)
         String treated as path to Pajek .net file with graph.
-    weight : str, default None
+    weight : str, default 'weight'
         Graph edges property to use as weights. If None, graph assumed to be unweighted.
-        Unused if graph is string (path to the file).
+        Ignored if graph is passed as string (path to the file).
     max_communities : int, default -1
         Maximum number of communities. If -1, assume to be infinite.
     modularity_resolution : float, default 1.0
