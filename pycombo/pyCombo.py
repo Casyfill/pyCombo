@@ -3,30 +3,22 @@
 from __future__ import annotations
 
 import logging
-from typing import Optional, Union, Tuple
+from typing import Optional, Tuple, Union
+
 import pycombo._combo as comboCPP
+from pycombo.misc import deconstruct_graph, is_graph
 
 __author__ = "Philipp Kats"
 __copyright__ = "Philipp Kats"
 __license__ = "fmit"
-__all__ = ["get_combo_partition"]
+__all__ = ["execute"]
 
 logger = logging.getLogger(__name__)
 
 
-def _check_repr(graph):
-    if type(graph).__name__ not in {"Graph", "DiGraph", "MultiGraph", "MultiDiGraph"}:
-        raise ValueError(
-            f"require networkx graph as first parameter, got `{type(graph).__name__}`"
-        )
-
-    if len(graph) == 0:
-        raise ValueError("Graph is empty")
-
-
-def get_combo_partition(
+def execute(
     graph,
-    weight_prop: Optional[str] = 'weight',
+    weight: Optional[str] = "weight",
     max_communities: int = -1,
     modularity_resolution: int = 1,
     num_split_attempts: int = 0,
@@ -40,11 +32,11 @@ def get_combo_partition(
 
     Parameters
     ----------
-    graph : NetworkX graph or str
-        String treated as path to Pajek .net file with graph.
-    weight_prop : str, default 'weight'
+    graph : NetworkX graph or path to the file (str)
+        nx.Graph object, or string treated as path to Pajek .net file.
+    weight : str, default 'weight'
         Graph edges property to use as weights. If None, graph assumed to be unweighted.
-        Unused if graph is string.
+        Ignored if graph is passed as string (path to the file).
     max_communities : int, default -1
         Maximum number of communities. If -1, assume to be infinite.
     modularity_resolution : float, default 1.0
@@ -62,7 +54,7 @@ def get_combo_partition(
     partition : dict{int : int}
         Nodes to community labels correspondance.
     modularity : float
-        Achieved modularity value.
+        Achieved modularity value. Only returned if return_modularity=True
     """
     if type(graph) is str:
         community_labels, modularity = comboCPP.execute_from_file(
@@ -73,23 +65,15 @@ def get_combo_partition(
             fixed_split_step=fixed_split_step,
             random_seed=random_seed,
         )
-        partition = {}
-        for i, community in enumerate(community_labels):
-            partition[i] = community
-    else:
-        _check_repr(graph)
-        nodenum, nodes = {}, {}
-        for i, n in enumerate(graph.nodes()):
-            nodenum[n] = i
-            nodes[i] = n
-        edges = []
-        for edge in graph.edges(data=True):
-            if weight_prop is not None:
-                edges.append(
-                    (nodenum[edge[0]], nodenum[edge[1]], edge[2].get(weight_prop, 1))
-                )
-            else:
-                edges.append((nodenum[edge[0]], nodenum[edge[1]], 1.0))
+
+        partition = {i: community for i, community in enumerate(community_labels)}
+
+    elif is_graph(graph):
+        if len(graph) == 0:
+            raise ValueError("Graph is empty")
+
+        nodes, edges = deconstruct_graph(graph, weight=weight)
+
         community_labels, modularity = comboCPP.execute(
             size=graph.number_of_nodes(),
             edges=edges,
@@ -100,11 +84,15 @@ def get_combo_partition(
             fixed_split_step=fixed_split_step,
             random_seed=random_seed,
         )
-        partition = {}
-        for i, community in enumerate(community_labels):
-            partition[nodes[i]] = community
-    logger.debug(f"Result: {partition}, {modularity}")
-    # TODO: setup c++ to throw stderr
+
+        partition = {
+            nodes[i]: community for i, community in enumerate(community_labels)
+        }
+
+    else:
+        raise ValueError(f"Wrong graph representation: `{graph}`")
+
+    logger.debug(f"Modularity for {graph.__repr__()}: {modularity:.5f}")
 
     if return_modularity:
         return partition, modularity

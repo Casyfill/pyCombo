@@ -5,6 +5,6 @@ except ModuleNotFoundError:
 
 __version__ = importlib_metadata.version(__name__)
 
-from .pyCombo import get_combo_partition
+from .pyCombo import execute
 
-__all__ = ["get_combo_partition"]
+__all__ = ["execute"]
