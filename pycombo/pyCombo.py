@@ -32,8 +32,8 @@ def execute(
 
     Parameters
     ----------
-    graph : NetworkX graph, path to the file (str), or adjacency matrix (numpy 2d array or list of lists)
-        String treated as path to Pajek .net file with graph.
+    graph : NetworkX graph or path to the file (str)
+        nx.Graph object, or string treated as path to Pajek .net file.
     weight : str, default 'weight'
         Graph edges property to use as weights. If None, graph assumed to be unweighted.
         Ignored if graph is passed as string (path to the file).
