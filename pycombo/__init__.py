@@ -7,4 +7,4 @@ __version__ = importlib_metadata.version(__name__)
 
 from .pyCombo import execute
 
-__all__ = ["execute", "__version__"]
+__all__ = ["execute"]

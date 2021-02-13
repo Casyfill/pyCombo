@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 import logging
-from typing import Optional, Union, Tuple
+from typing import Optional, Tuple, Union
+
 import pycombo._combo as comboCPP
-from pycombo.misc import _check_repr, deconstruct_graph
+from pycombo.misc import deconstruct_graph, is_graph
 
 __author__ = "Philipp Kats"
 __copyright__ = "Philipp Kats"
@@ -31,7 +32,7 @@ def execute(
 
     Parameters
     ----------
-    graph : NetworkX graph or str
+    graph : NetworkX graph, path to the file (str), or adjacency matrix (numpy 2d array or list of lists)
         String treated as path to Pajek .net file with graph.
     weight : str, default None
         Graph edges property to use as weights. If None, graph assumed to be unweighted.
@@ -53,7 +54,7 @@ def execute(
     partition : dict{int : int}
         Nodes to community labels correspondance.
     modularity : float
-        Achieved modularity value.
+        Achieved modularity value. Only returned if return_modularity=True
     """
     if type(graph) is str:
         community_labels, modularity = comboCPP.execute_from_file(
@@ -65,13 +66,14 @@ def execute(
             random_seed=random_seed,
         )
 
-        partition = dict()
-        for i, community in enumerate(community_labels):
-            partition[i] = community
-    else:
-        _check_repr(graph)
+        partition = {i: community for i, community in enumerate(community_labels)}
+
+    elif is_graph(graph):
+        if len(graph) == 0:
+            raise ValueError("Graph is empty")
+
         nodes, edges = deconstruct_graph(graph, weight=weight)
-        logger.debug(edges)
+
         community_labels, modularity = comboCPP.execute(
             size=graph.number_of_nodes(),
             edges=edges,
@@ -83,9 +85,12 @@ def execute(
             random_seed=random_seed,
         )
 
-        partition = dict()
-        for i, community in enumerate(community_labels):
-            partition[nodes[i]] = community
+        partition = {
+            nodes[i]: community for i, community in enumerate(community_labels)
+        }
+
+    else:
+        raise ValueError(f"Wrong graph representation: `{graph}`")
 
     logger.debug(f"Modularity for {graph.__repr__()}: {modularity:.5f}")
 

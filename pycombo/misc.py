@@ -1,14 +1,12 @@
 from typing import Optional, Tuple, Dict, List
 
+nodes_ = Dict[int, int]
+edges_ = List[Tuple[int, int, float]]
 
-def _check_repr(graph):
-    if type(graph).__name__ not in {"Graph", "DiGraph", "MultiGraph", "MultiDiGraph"}:
-        raise ValueError(
-            f"require networkx graph as first parameter, got `{type(graph).__name__}`"
-        )
 
-    if len(graph) == 0:
-        raise ValueError("Graph is empty")
+def is_graph(graph) -> bool:
+    graph_names = {"Graph", "DiGraph", "MultiGraph", "MultiDiGraph"}
+    return type(graph).__name__ in graph_names
 
 
 def is_weighted(G, edge: Optional[tuple] = None, weight: str = "weight") -> bool:
@@ -66,9 +64,7 @@ def is_weighted(G, edge: Optional[tuple] = None, weight: str = "weight") -> bool
     return all(weight in data for u, v, data in G.edges(data=True))
 
 
-def deconstruct_graph(
-    graph, weight: Optional[str] = None
-) -> Tuple[Dict[int, int], List[Tuple[int, int, float]]]:
+def deconstruct_graph(graph, weight: Optional[str] = None) -> Tuple[nodes_, edges_]:
     """deconstructs networkx.Graph
 
     deconstructs networkx.Graph into
