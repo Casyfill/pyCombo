@@ -2,16 +2,19 @@
 # -*- coding: utf-8 -*-
 import networkx as nx
 import pytest
+from typing import Iterable
 
 
-def _partitionGroup(p):
+def _partitionGroup(p: dict) -> Iterable[list]:
     """
     get partition as label-dict
+
+    returns dict of partition -> set of nodes
     this way we can check if two partitions are similar, despite
     different labels
     """
 
-    v = {}
+    v = dict()
     for key, value in sorted(p.items()):
         v.setdefault(value, []).append(key)
     return sorted(v.values())
@@ -37,5 +40,4 @@ def test_deconstruct_graph(karate):
     from pycombo.misc import deconstruct_graph
 
     nodes, edges = deconstruct_graph(karate)
-    print(nodes, edges)
     assert len(nodes) == len(karate)

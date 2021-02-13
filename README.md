@@ -20,7 +20,7 @@ The basic usage is as follows:
 import pycombo
 import networkx as nx
 
-print(pycombo.get_combo_partition(nx.karate_club_graph()))
+partition = pycombo.execute(nx.karate_club_graph())
 ```
 More examples could be found in [example](https://github.com/Casyfill/pyCombo/tree/master/example) folder.
 
