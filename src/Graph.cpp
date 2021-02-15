@@ -44,9 +44,8 @@ using std::cout;
 using std::endl;
 using std::max;
 using std::min;
-using std::move;
 
-Graph ReadFromEdgelist(const string& file_name, double mod_resolution)
+Graph ReadFromEdgelist(const string& file_name, double mod_resolution, bool treat_as_modularity)
 {
 	ifstream file(file_name.c_str());
 	if (!file.is_open()) {
@@ -82,10 +81,10 @@ Graph ReadFromEdgelist(const string& file_name, double mod_resolution)
 		sources[i] -= min_vertex_number;
 		destinations[i] -= min_vertex_number;
 	}
-	return Graph(size, sources, destinations, weights, is_directed, mod_resolution);
+	return Graph(size, sources, destinations, weights, is_directed, mod_resolution, treat_as_modularity);
 }
 
-Graph ReadFromPajek(const string& file_name, double mod_resolution)
+Graph ReadFromPajek(const string& file_name, double mod_resolution, bool treat_as_modularity)
 {
 	ifstream file(file_name.c_str());
 	if (!file.is_open()) {
@@ -142,68 +141,150 @@ Graph ReadFromPajek(const string& file_name, double mod_resolution)
 		sources[i] -= min_vertex_number;
 		destinations[i] -= min_vertex_number;
 	}
-	return Graph(size, sources, destinations, weights, is_directed, mod_resolution);
+	return Graph(size, sources, destinations, weights, is_directed, mod_resolution, treat_as_modularity);
 }
 
-Graph ReadGraphFromFile(const string& file_name, double mod_resolution)
+Graph ReadFromCSV(const string& file_name, double mod_resolution, bool treat_as_modularity)
+{
+	ifstream file(file_name.c_str());
+	if (!file.is_open()) {
+		cerr << "File " << file_name << " can not be opened." << endl;
+		return Graph();
+	}
+    vector<vector<double>> matrix;
+    int src = 0;
+    while (file.good()) {
+		string line;
+		getline(file, line);
+		stringstream str_stream(line);
+		string trimmed_line;
+		str_stream >> trimmed_line;
+		if (trimmed_line != "")
+			matrix.push_back(vector<double>());
+		else
+			break;
+		str_stream = stringstream(line);
+		double weight = 1.0;
+		char separator;
+		while (str_stream.good()) {
+			str_stream >> weight;
+			str_stream >> separator;
+			matrix[src].push_back(weight);
+		}
+		if (src > 0 && matrix[src].size() != matrix[src-1].size()) {
+			cerr << "Error in ReadFromCSV: matrix is not square." << endl;
+			return Graph();
+		}
+		++src;
+	}
+	file.close();
+	if (matrix.size() != matrix.back().size()) {
+		cerr << "Error in ReadFromCSV: matrix is not square." << endl;
+		return Graph();
+	}
+    return Graph(matrix, mod_resolution, treat_as_modularity);
+}
+
+Graph ReadGraphFromFile(const string& file_name, double mod_resolution, bool treat_as_modularity)
 {
 	size_t dot_position = file_name.rfind('.');
 	if (dot_position != string::npos) {
 		string ext = file_name.substr(file_name.rfind('.'), file_name.length() - file_name.rfind('.'));
 		if (ext == ".edgelist")
-			return ReadFromEdgelist(file_name, mod_resolution);
+			return ReadFromEdgelist(file_name, mod_resolution, treat_as_modularity);
 		else if (ext == ".net")
-			return ReadFromPajek(file_name, mod_resolution);
+			return ReadFromPajek(file_name, mod_resolution, treat_as_modularity);
+		else if (ext == ".csv")
+			return ReadFromCSV(file_name, mod_resolution, treat_as_modularity);
 	}
-	cerr << "Error in ReadGraphFromFile: unsupported file format. Must be either Pajek .net or .edgelist" << endl;
+	cerr << "Error in ReadGraphFromFile: unsupported file format. Must be Pajek .net, .edgelist or .csv." << endl;
 	return Graph();
 }
 
 void swap(Graph& left, Graph& right)
 {
 	using std::swap;
-	swap(left.m_size, right.m_size);
-	swap(left.m_total_weight, right.m_total_weight);
 	swap(left.m_number_of_communities, right.m_number_of_communities);
 	swap(left.m_is_directed, right.m_is_directed);
 	swap(left.m_modularity_resolution, right.m_modularity_resolution);
-	swap(left.m_matrix, right.m_matrix);
 	swap(left.m_modularity_matrix, right.m_modularity_matrix);
 	swap(left.m_communities, right.m_communities);
 }
 
 Graph::Graph(bool is_directed, double modularity_resolution)
 {
-	m_size = 0;
-	m_total_weight = 0.0;
 	m_is_directed = is_directed;
 	m_number_of_communities = 0;
 	m_modularity_resolution = modularity_resolution;
 }
 
 Graph::Graph(int size, const std::vector<int>& sources, const std::vector<int>& destinations, const std::vector<double>& weights,
-	bool is_directed, double modularity_resolution) :
+	bool is_directed, double modularity_resolution, bool treat_as_modularity) :
 	Graph(is_directed, modularity_resolution)
 {
-	FillModMatrix(size, sources, destinations, weights);
+	if (treat_as_modularity)
+		FillModMatrix(size, sources, destinations, weights);
+	else
+		CalcModMatrix(size, sources, destinations, weights);
 }
 
-Graph::Graph(int size, const std::vector<std::tuple<int, int, double>>& edges, bool is_directed, double modularity_resolution) :
+Graph::Graph(int size, const std::vector<std::tuple<int, int, double>>& edges, bool is_directed, double modularity_resolution, bool treat_as_modularity) :
 	Graph(is_directed, modularity_resolution)
 {
-	FillModMatrix(size, edges);
+	if (treat_as_modularity)
+		FillModMatrix(size, edges);
+	else
+		CalcModMatrix(size, edges);
+}
+
+bool IsMatrixSymmetric(const std::vector<std::vector<double>>& matrix)
+{
+	for (size_t i = 0; i < matrix.size(); ++i)
+		for (size_t j = i+1; j < matrix.size(); ++j)
+			if (matrix[i][j] != matrix[j][i])
+				return false;
+	return true;
+}
+
+Graph::Graph(const vector<vector<double>>& matrix, double modularity_resolution, bool treat_as_modularity) :
+	Graph(false, modularity_resolution)
+{
+	for (size_t i = 0; i < matrix.size(); ++i) {
+		if (matrix.size() != matrix[i].size()) {
+			cerr << "Error in Graph(matrix): matrix must be a square matrix." << endl;
+			return;
+		}
+	}
+	m_is_directed = !IsMatrixSymmetric(m_modularity_matrix);
+	if (treat_as_modularity)
+		FillModMatrix(matrix);
+	else
+		CalcModMatrix(matrix);
+}
+
+Graph::Graph(vector<vector<double>>&& matrix, double modularity_resolution, bool treat_as_modularity) :
+	Graph(false, modularity_resolution)
+{
+	for (size_t i = 0; i < matrix.size(); ++i) {
+		if (matrix.size() != matrix[i].size()) {
+			cerr << "Error in Graph(matrix): matrix must be a square matrix." << endl;
+			return;
+		}
+	}
+	m_is_directed = !IsMatrixSymmetric(m_modularity_matrix);
+	if (treat_as_modularity)
+		FillModMatrix(std::move(matrix));
+	else
+		CalcModMatrix(matrix);
 }
 
 Graph::Graph(const Graph& graph) :
-	m_matrix(graph.m_matrix),
 	m_modularity_matrix(graph.m_modularity_matrix),
 	m_communities(graph.m_communities)
 {
-	m_size = graph.Size();
-	m_total_weight = graph.m_total_weight;
 	m_is_directed = graph.IsDirected();
 	m_modularity_resolution = graph.ModularityResolution();
-	m_number_of_communities = graph.m_number_of_communities;
+	m_number_of_communities = graph.NumberOfCommunities();
 }
 
 Graph::Graph(Graph&& graph) noexcept :
@@ -218,176 +299,180 @@ Graph& Graph::operator=(Graph graph)
 	return *this;
 }
 
-void Graph::FillMatrix(int size, const vector<int>& sources, const vector<int>& destinations, const vector<double>& weights)
+void SymmetrizeMatrix(vector<vector<double>>& matrix)
 {
-	if (sources.size() != destinations.size() || sources.size() != weights.size()) {
-		cerr << "Error in FillMatrix: sources, destinations and weights must be of the same size." << endl;
-		return;
-	}
-	m_total_weight = 0;
-	for (double weight : weights)
-		m_total_weight += weight;
-	if (!m_is_directed)
-		m_total_weight *= 2;
-	m_size = 1 + max(*max_element(sources.begin(), sources.end()), *max_element(destinations.begin(), destinations.end()));
-	if (m_size > size) {
-		cerr << "Error in FillMatrix: vertices' index cannot be greater than size-1" << endl;
-		return;
-	}
-	m_size = size;
-	m_matrix.assign(m_size, vector<double>(m_size, 0));
-	for (size_t i = 0; i < sources.size(); ++i) {
-		m_matrix[sources[i]][destinations[i]] += weights[i];
-		if (!m_is_directed)
-			m_matrix[destinations[i]][sources[i]] += weights[i];
-	}
+	for (size_t i = 0; i < matrix.size(); ++i)
+		for (size_t j = i+1; j < matrix.size(); ++j)
+			matrix[i][j] = matrix[j][i] = (matrix[i][j] + matrix[j][i]) / 2;
 }
 
-void Graph::FillMatrix(int size, const vector<tuple<int, int, double>>& edges)
+void Graph::CalcModMatrix(int size, const vector<int>& sources, const vector<int>& destinations, const vector<double>& weights)
 {
-	m_total_weight = 0;
-	m_size = 0;
-	for (const tuple<int, int, double>& edge : edges) {
-		m_total_weight += get<2>(edge);
-		m_size = max(m_size, max(get<0>(edge), get<1>(edge)));
-	}
-	m_size++;
-	if (m_size > size) {
-		cerr << "Error in FillMatrix: vertices' index cannot be greater than size-1" << endl;
+	double total_weight = 0.0;
+	for (double weight : weights)
+		total_weight += weight;
+	if (!m_is_directed)
+		total_weight *= 2;
+	int max_index = max(*max_element(sources.begin(), sources.end()), *max_element(destinations.begin(), destinations.end()));
+	if (max_index >= size) {
+		cerr << "Error in CalcModMatrix: vertices' index cannot be greater than size-1" << endl;
 		return;
 	}
-	m_size = size;
-	if (!m_is_directed)
-		m_total_weight *= 2;
-	m_matrix.assign(m_size, vector<double>(m_size, 0));
-	for (const tuple<int, int, double>& edge : edges) {
-		int source = get<0>(edge);
-		int destination = get<1>(edge);
-		double weight = get<2>(edge);
-		m_matrix[source][destination] += weight;
+	m_modularity_matrix.assign(size, vector<double>(size, 0));
+	vector<double> sumQ2(size, 0.0);
+	vector<double> sumQ1(size, 0.0);
+	for (size_t i = 0; i < sources.size(); ++i) {
+		m_modularity_matrix[sources[i]][destinations[i]] += weights[i] / total_weight;
 		if (!m_is_directed)
-			m_matrix[destination][source] += weight;
+			m_modularity_matrix[destinations[i]][sources[i]] += weights[i] / total_weight;
+		sumQ1[sources[i]] += weights[i] / total_weight;
+		sumQ2[destinations[i]] += weights[i] / total_weight;
+		if (!m_is_directed) {
+			sumQ1[destinations[i]] += weights[i] / total_weight;
+			sumQ2[sources[i]] += weights[i] / total_weight;
+		}
 	}
+	for (int i = 0; i < size; ++i)
+		for (int j = 0; j < size; ++j)
+			m_modularity_matrix[i][j] -= m_modularity_resolution * sumQ1[i]*sumQ2[j];
+	if (m_is_directed)
+		SymmetrizeMatrix(m_modularity_matrix);
 }
 
 void Graph::FillModMatrix(int size, const vector<int>& sources, const vector<int>& destinations, const vector<double>& weights)
 {
-	m_total_weight = 0;
-	for (double weight : weights)
-		m_total_weight += weight;
-	if (!m_is_directed)
-		m_total_weight *= 2;
-	m_size = 1 + max(*max_element(sources.begin(), sources.end()), *max_element(destinations.begin(), destinations.end()));
-	if (m_size > size) {
+	int max_index = max(*max_element(sources.begin(), sources.end()), *max_element(destinations.begin(), destinations.end()));
+	if (max_index >= size) {
 		cerr << "Error in FillModMatrix: vertices' index cannot be greater than size-1" << endl;
 		return;
 	}
-	m_size = size;
-	m_modularity_matrix.assign(m_size, vector<double>(m_size, 0));
-	vector<double> sumQ2(m_size, 0.0);
-	vector<double> sumQ1(m_size, 0.0);
+	m_modularity_matrix.assign(size, vector<double>(size, 0));
 	for (size_t i = 0; i < sources.size(); ++i) {
-		m_modularity_matrix[sources[i]][destinations[i]] += weights[i] / m_total_weight;
-		if (!m_is_directed)
-			m_modularity_matrix[destinations[i]][sources[i]] += weights[i] / m_total_weight;
-		sumQ1[sources[i]] += weights[i] / m_total_weight;
-		sumQ2[destinations[i]] += weights[i] / m_total_weight;
-		if (!m_is_directed) {
-			sumQ1[destinations[i]] += weights[i] / m_total_weight;
-			sumQ2[sources[i]] += weights[i] / m_total_weight;
+		if (m_is_directed)
+			m_modularity_matrix[sources[i]][destinations[i]] += weights[i];
+		else {
+			m_modularity_matrix[sources[i]][destinations[i]] += weights[i] / 2;
+			m_modularity_matrix[destinations[i]][sources[i]] += weights[i] / 2;
 		}
 	}
-	for (int i = 0; i < m_size; ++i)
-		for (int j = 0; j < m_size; ++j)
-			m_modularity_matrix[i][j] -= m_modularity_resolution * sumQ1[i]*sumQ2[j];
-	for (int i = 0; i < m_size; ++i)
-		for (int j = 0; j < m_size; ++j)
-			m_modularity_matrix[i][j] = m_modularity_matrix[j][i] = (m_modularity_matrix[i][j] + m_modularity_matrix[j][i]) / 2;
+	if (m_is_directed)
+		SymmetrizeMatrix(m_modularity_matrix);
 }
 
-void Graph::FillModMatrix(int size, const std::vector<std::tuple<int, int, double>>& edges)
+void Graph::CalcModMatrix(int size, const std::vector<std::tuple<int, int, double>>& edges)
 {
-	m_total_weight = 0;
-	m_size = 0;
+	double total_weight = 0.0;
+	int max_index = 0;
 	for (const tuple<int, int, double>& edge : edges) {
-		m_total_weight += get<2>(edge);
-		m_size = max(m_size, max(get<0>(edge), get<1>(edge)));
+		total_weight += get<2>(edge);
+		max_index = max(max_index, max(get<0>(edge), get<1>(edge)));
 	}
-	m_size++;
-	if (m_size > size) {
-		cerr << "Error in FillModMatrix: vertices' index cannot be greater than size-1" << endl;
+	if (max_index >= size) {
+		cerr << "Error in CalcModMatrix: vertices' index cannot be greater than size-1" << endl;
 		return;
 	}
-	m_size = size;
 	if (!m_is_directed)
-		m_total_weight *= 2;
-	m_modularity_matrix.assign(m_size, vector<double>(m_size, 0));
-	vector<double> sumQ2(m_size, 0.0);
-	vector<double> sumQ1(m_size, 0.0);
+		total_weight *= 2;
+	m_modularity_matrix.assign(size, vector<double>(size, 0));
+	vector<double> sumQ2(size, 0.0);
+	vector<double> sumQ1(size, 0.0);
 	for (const tuple<int, int, double>& edge : edges) {
 		int source = get<0>(edge);
 		int destination = get<1>(edge);
 		double weight = get<2>(edge);
-		m_modularity_matrix[source][destination] += weight / m_total_weight;
+		m_modularity_matrix[source][destination] += weight / total_weight;
 		if (!m_is_directed)
-			m_modularity_matrix[destination][source] += weight / m_total_weight;
-		sumQ1[source] += weight / m_total_weight;
-		sumQ2[destination] += weight / m_total_weight;
+			m_modularity_matrix[destination][source] += weight / total_weight;
+		sumQ1[source] += weight / total_weight;
+		sumQ2[destination] += weight / total_weight;
 		if (!m_is_directed) {
-			sumQ1[destination] += weight / m_total_weight;
-			sumQ2[source] += weight / m_total_weight;
+			sumQ1[destination] += weight / total_weight;
+			sumQ2[source] += weight / total_weight;
 		}
 	}
-	for (int i = 0; i < m_size; ++i)
-		for (int j = 0; j < m_size; ++j)
+	for (int i = 0; i < size; ++i)
+		for (int j = 0; j < size; ++j)
 			m_modularity_matrix[i][j] -= m_modularity_resolution * sumQ1[i]*sumQ2[j];
-	for (int i = 0; i < m_size; ++i)
-		for (int j = 0; j < m_size; ++j)
-			m_modularity_matrix[i][j] = m_modularity_matrix[j][i] = (m_modularity_matrix[i][j] + m_modularity_matrix[j][i]) / 2;
+	if (m_is_directed)
+		SymmetrizeMatrix(m_modularity_matrix);
 }
 
-double Graph::EdgeWeight(int u, int v) const
+void Graph::FillModMatrix(int size, const std::vector<std::tuple<int, int, double>>& edges)
 {
-	return m_matrix[u][v];
-}
-
-void Graph::CalcModMatrix()
-{
-	if (!m_modularity_matrix.empty())
+	int max_index = 0;
+	for (const tuple<int, int, double>& edge : edges)
+		max_index = max(max_index, max(get<0>(edge), get<1>(edge)));
+	if (max_index >= size) {
+		cerr << "Error in FillModMatrix: vertices' index cannot be greater than size-1" << endl;
 		return;
+	}
+	m_modularity_matrix.assign(size, vector<double>(size, 0));
+	for (const tuple<int, int, double>& edge : edges) {
+		int source = get<0>(edge);
+		int destination = get<1>(edge);
+		double weight = get<2>(edge);
+		if (m_is_directed)
+			m_modularity_matrix[source][destination] += weight;
+		else {
+			m_modularity_matrix[source][destination] += weight / 2;
+			m_modularity_matrix[destination][source] += weight / 2;
+		}
+	}
+	if (m_is_directed)
+		SymmetrizeMatrix(m_modularity_matrix);
+}
 
-	m_modularity_matrix.assign(m_size, vector<double>(m_size, 0.0));
-	for (int i = 0; i < m_size; ++i)
-		for (int j = 0; j < m_size; ++j)
-			m_modularity_matrix[i][j] = EdgeWeight(i, j) / m_total_weight;
-	
-	vector<double> sumQ2(m_size, 0.0);
-	vector<double> sumQ1(m_size, 0.0);
-	for (int i = 0; i < m_size; ++i)
-		for (int j = 0; j < m_size; ++j) {
+void Graph::CalcModMatrix(const std::vector<std::vector<double>>& matrix)
+{
+	int size = int(matrix.size());
+	double total_weight = 0.0;
+	for (int i = 0; i < size; ++i)
+		for (int j = 0; j < size; ++j)
+			total_weight += matrix[i][j];
+	// double loop edges for undirected graphs
+	if (!m_is_directed)
+		for (int i = 0; i < size; ++i)
+			total_weight += matrix[i][i];
+	m_modularity_matrix.assign(size, vector<double>(size, 0.0));
+	for (int i = 0; i < size; ++i) {
+		for (int j = 0; j < size; ++j)
+			m_modularity_matrix[i][j] = matrix[i][j] / total_weight;
+		if (!m_is_directed)
+			m_modularity_matrix[i][i] *= 2;
+	}
+	vector<double> sumQ2(size, 0.0);
+	vector<double> sumQ1(size, 0.0);
+	for (int i = 0; i < size; ++i)
+		for (int j = 0; j < size; ++j) {
 			sumQ1[i] += m_modularity_matrix[i][j];
 			sumQ2[j] += m_modularity_matrix[i][j];
 		}
-	for (int i = 0; i < m_size; ++i)
-		for (int j = 0; j < m_size; ++j)
+	for (int i = 0; i < size; ++i)
+		for (int j = 0; j < size; ++j)
 			m_modularity_matrix[i][j] -= m_modularity_resolution * sumQ1[i]*sumQ2[j];
-	for (int i = 0; i < m_size; ++i)
-		for (int j = 0; j < m_size; ++j)
-			m_modularity_matrix[i][j] = m_modularity_matrix[j][i] = (m_modularity_matrix[i][j] + m_modularity_matrix[j][i]) / 2;
+	if (m_is_directed)
+		SymmetrizeMatrix(m_modularity_matrix);
+}
+
+void Graph::FillModMatrix(const std::vector<std::vector<double>>& matrix)
+{
+	m_modularity_matrix = matrix;
+	if (m_is_directed)
+		SymmetrizeMatrix(m_modularity_matrix);
+}
+
+void Graph::FillModMatrix(std::vector<std::vector<double>>&& matrix)
+{
+	std::swap(m_modularity_matrix, matrix);
+	if (m_is_directed)
+		SymmetrizeMatrix(m_modularity_matrix);
 }
 
 void Graph::Print() const
 {
-	cout << "Matrix:" << endl;
-	for (int i = 0; i < m_size; ++i) {
-		for (int j = 0; j < m_size; ++j) {
-			cout << m_matrix[i][j] << '\t';
-		}
-		cout << endl;
-	}
 	cout << "Modularity matrix:" << endl;
-	for (int i = 0; i < m_size; ++i) {
-		for (int j = 0; j < m_size; ++j) {
+	for (int i = 0; i < Size(); ++i) {
+		for (int j = 0; j < Size(); ++j) {
 			cout << m_modularity_matrix[i][j] << '\t';
 		}
 		cout << endl;
@@ -401,15 +486,17 @@ void Graph::PrintCommunity(const string& file_name) const
         cerr << "File " << file_name << " can not be opened." << endl;
 		return;
     }
-	for (int i = 0; i < m_size; ++i)
+	for (int i = 0; i < Size(); ++i)
 		file << m_communities[i] << endl;
 	file.close();
 }
 
 void Graph::SetCommunities(const vector<int>& new_communities, int number)
 {
-	if (m_size != int(new_communities.size()))
+	if (Size() != int(new_communities.size())) {
+		cerr << "Error in SetCommunities: number of elements in new_communities must be equal to graph size." << endl;
 		return;
+	}
 	m_communities = new_communities;
 	if (number == -1)
 		m_number_of_communities = *max_element(m_communities.begin(), m_communities.end()) + 1;
@@ -433,14 +520,14 @@ void Graph::PerformSplit(int origin, int destination, const vector<int>& to_be_m
 		destination = m_number_of_communities;
 	if (destination == m_number_of_communities)
 		++m_number_of_communities;
-	for (int i = 0; i < m_size; ++i)
+	for (int i = 0; i < Size(); ++i)
 		if (m_communities[i] == origin && to_be_moved[i])
 			m_communities[i] = destination;
 }
 
 bool Graph::IsCommunityEmpty(int community) const
 {
-	for (int i = 0; i < m_size; ++i)
+	for (int i = 0; i < Size(); ++i)
 		if (m_communities[i] == community)
 			return false;
 	return true;
@@ -450,7 +537,7 @@ bool Graph::DeleteCommunityIfEmpty(int community)
 {
 	if (IsCommunityEmpty(community)) {
 		set<int> community_labels;
-        for (int i = 0; i < m_size; ++i) {
+        for (int i = 0; i < Size(); ++i) {
 			if (m_communities[i] > community)
 				--m_communities[i];
 			community_labels.insert(m_communities[i]);
@@ -464,7 +551,7 @@ bool Graph::DeleteCommunityIfEmpty(int community)
 vector<int> Graph::CommunityIndices(int community) const
 {
 	vector<int> res;
-	for (int i = 0; i < m_size; ++i)
+	for (int i = 0; i < Size(); ++i)
 		if (m_communities[i] == community)
 			res.push_back(i);
 	return res;

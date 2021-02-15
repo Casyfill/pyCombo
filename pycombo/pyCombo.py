@@ -23,6 +23,7 @@ def execute(
     modularity_resolution: int = 1,
     num_split_attempts: int = 0,
     fixed_split_step: int = 0,
+    treat_as_modularity: bool = False,
     return_modularity: bool = True,
     random_seed: int = -1,
 ) -> Union[Tuple[dict, float], dict]:
@@ -44,15 +45,22 @@ def execute(
     num_split_attempts : int, default 0
         Number of split attempts. If 0, autoadjust this number automatically.
     fixed_split_step : int, default 0
-        Step number to apply predifined split. If 0, use only random splits,
+        Step number to apply predefined split. If 0, use only random splits,
         if >0 sets up the usage of 6 fixed type splits on every fixed_split_step.
-    random_seedd : int, default 0
+    treat_as_modularity : bool, default False
+        Indicates if edge weights should be treated as modularity scores.
+        If True, the algorithm solves clique partitioning problem over the given graph,
+        treated as modularity graph (matrix).
+        `modularity_resolution` is ignored in this case.
+    return_modularity : bool, default True
+        Indicates if function should return achieved modularity score.
+    random_seed : int, default 0
         Random seed to use.
 
     Returns
     -------
     partition : dict{int : int}
-        Nodes to community labels correspondance.
+        Nodes to community labels correspondence.
     modularity : float
         Achieved modularity value. Only returned if return_modularity=True
     """
@@ -63,6 +71,20 @@ def execute(
             modularity_resolution=modularity_resolution,
             num_split_attempts=num_split_attempts,
             fixed_split_step=fixed_split_step,
+            treat_as_modularity=treat_as_modularity,
+            random_seed=random_seed,
+        )
+
+        partition = {i: community for i, community in enumerate(community_labels)}
+
+    elif type(graph) is list:
+        community_labels, modularity = comboCPP.execute_from_matrix(
+            matrix=graph,
+            max_communities=max_communities,
+            modularity_resolution=modularity_resolution,
+            num_split_attempts=num_split_attempts,
+            fixed_split_step=fixed_split_step,
+            treat_as_modularity=treat_as_modularity,
             random_seed=random_seed,
         )
 
@@ -82,6 +104,7 @@ def execute(
             modularity_resolution=modularity_resolution,
             num_split_attempts=num_split_attempts,
             fixed_split_step=fixed_split_step,
+            treat_as_modularity=treat_as_modularity,
             random_seed=random_seed,
         )
 

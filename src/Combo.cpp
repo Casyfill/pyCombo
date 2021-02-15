@@ -281,7 +281,6 @@ void ComboAlgorithm::Run(Graph& graph, int max_comunities)
 {
 	if (max_comunities <= 0)
 		max_comunities = graph.Size();
-	graph.CalcModMatrix();
 	graph.SetCommunities(vector<int>(graph.Size(), 0));
 	double currentMod = graph.Modularity();
 	vector< vector<double> > moves(2, vector<double>(2, 0)); //results of splitting communities
