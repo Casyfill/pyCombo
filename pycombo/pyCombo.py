@@ -54,8 +54,10 @@ def execute(
         `modularity_resolution` is ignored in this case.
     return_modularity : bool, default True
         Indicates if function should return achieved modularity score.
-    random_seed : int, default 0
+    random_seed : int, default -1
         Random seed to use.
+        Negative number indicates using some internal default value that is based on time
+        and is expected to be different for each call.
 
     Returns
     -------
