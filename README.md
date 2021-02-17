@@ -3,10 +3,11 @@
 
 pyCombo is a python wrapper around [C++ implementation](https://github.com/Alexander-Belyi/Combo) of the [network] community detection algorithm called "Combo".
 
-Details of the algorythm are described in the paper "General optimization technique for high-quality community detection in the paper:
+Details of the algorithm are described in the paper "General optimization technique for high-quality community detection in the paper:
 
-
-	Sobolevsky S., Campari R., Belyi A., and Ratti C. "General optimization technique for high-quality community detection in complex networks" Phys. Rev. E 90, 012811
+```
+Sobolevsky, S., Campari, R., Belyi, A. and Ratti, C., 2014. General optimization technique for high-quality community detection in complex networks. Physical Review E, 90(1), p.012811.
+```
 
 ## Installation
 You can install current version of pycombo from github by executing
@@ -46,23 +47,19 @@ All copiryghts and licensing is same as covered in the initial package
 - [x] Tests, Travis Ci, Coveralls
 - [x] Package delivery, setup.py
 - [x] Installation via pip
-- [x] unweighted graph
-- [x] switched to Github Actions
-- [x] switch to poetry
-- [x] assert reproductibility (random seed)
-- [x] setup pybind11 binding
-- [x] directed graph
-- [ ] understand 2 partitions issue/reason
-- [ ] full testing
-- [ ] performance (speed) benchmarks
+- [x] Unweighted graph
+- [x] Switched to Github Actions
+- [x] Switch to poetry
+- [x] Assert reproducibility (random seed)
+- [x] Setup pybind11 binding
+- [x] Directed graph
+- [ ] Full testing
+- [ ] Performance (speed) benchmarks
 - [ ] Exceptions
 - [ ] Logging
-- [ ] Two Communities minumum
 
 
 # Notes and issues
-- pyCombo does not work on graph of N=1
-- pyCombo for some reason always split the network into 2, even for the complete graph
 - for now c++ sources duplicate https://github.com/Alexander-Belyi/Combo
 
 # Development
