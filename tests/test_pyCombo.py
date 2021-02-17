@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import networkx as nx
 import pytest
+import os
 from typing import Iterable
 
 
@@ -42,6 +43,20 @@ def test_deconstruct_graph(karate):
     nodes, edges = deconstruct_graph(karate)
     assert len(nodes) == len(karate)
     assert len(edges) == karate.size()
+
+
+def test_execute_from_file(karate):
+    import pycombo
+
+    path = "./karate.net"
+    nx.write_pajek(karate, path)
+    partition, modularity = pycombo.execute(path)
+    assert modularity == pytest.approx(0.41979, 0.000001), modularity
+    assert _partitionGroup(partition) == _partitionGroup({0: 2, 1: 2, 2: 2, 3: 2, 4: 0, 5: 0, 6: 0, 7: 2, 8: 1, 9: 1,
+                                                          10: 0, 11: 2, 12: 2, 13: 2, 14: 1, 15: 1, 16: 0, 17: 2, 18: 1, 19: 2,
+                                                          20: 1, 21: 2, 22: 1, 23: 3, 24: 3, 25: 3, 26: 1, 27: 3, 28: 3, 29: 1,
+                                                          30: 1, 31: 3, 32: 1, 33: 1})
+    os.remove(path)
 
 
 def test_weighted_graph():

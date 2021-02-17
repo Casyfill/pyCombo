@@ -13,9 +13,10 @@ std::tuple<std::vector<int>, double> execute_from_file(
 	int max_communities=-1,
 	int num_split_attempts=0,
 	int fixed_split_step=0,
+	bool treat_as_modularity=false,
 	int random_seed=-1)
 {
-	Graph graph = ReadGraphFromFile(file_name, modularity_resolution);
+	Graph graph = ReadGraphFromFile(file_name, modularity_resolution, treat_as_modularity);
 	if(graph.Size() <= 0) {
 		std::cerr << "Error: graph is empty" << std::endl;
 		return {std::vector<int>(), -1.0};
@@ -67,6 +68,7 @@ PYBIND11_MODULE(_combo, m) {
 		py::arg("max_communities") = -1,
 		py::arg("num_split_attempts") = 0,
 		py::arg("fixed_split_step") = 0,
+		py::arg("treat_as_modularity") = false,
 		py::arg("random_seed") = -1
 		);
 
