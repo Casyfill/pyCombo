@@ -27,6 +27,7 @@
 #include <chrono>
 #include <cmath>
 #include <iostream>
+#include <optional>
 #include <random>
 using namespace std;
 
@@ -281,7 +282,6 @@ void ComboAlgorithm::Run(Graph& graph, int max_comunities)
 {
 	if (max_comunities <= 0)
 		max_comunities = graph.Size();
-	graph.CalcModMatrix();
 	graph.SetCommunities(vector<int>(graph.Size(), 0));
 	double currentMod = graph.Modularity();
 	vector< vector<double> > moves(2, vector<double>(2, 0)); //results of splitting communities
@@ -344,10 +344,11 @@ void ComboAlgorithm::SetNumberOfSplitAttempts(int split_tries)
 	m_num_split_attempts = split_tries;
 }
 
-ComboAlgorithm::ComboAlgorithm(long long random_seed, int num_split_attempts, int fixed_split_step) :
+ComboAlgorithm::ComboAlgorithm(optional<unsigned long long> random_seed, int num_split_attempts, int fixed_split_step) :
 	m_fixed_split_step(fixed_split_step),
-	m_random_number_generator(random_seed < 0 ? std::chrono::duration_cast<std::chrono::milliseconds>(
-		std::chrono::steady_clock::now().time_since_epoch()).count() : random_seed),
+	m_random_number_generator(random_seed.has_value() ? random_seed.value() :
+		std::chrono::duration_cast<std::chrono::milliseconds>(
+			std::chrono::steady_clock::now().time_since_epoch()).count()),
 	m_bernoulli_distribution(0.5)
 {
 	SetNumberOfSplitAttempts(num_split_attempts);

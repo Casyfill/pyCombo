@@ -27,6 +27,16 @@ def test_graph():
 
 
 @pytest.fixture(scope="function")
+def test_cp_graph():
+    """test graph with known clique partition"""
+    G = nx.Graph()
+    G.add_nodes_from(range(4))
+    G.add_edges_from([(0, 1, {'weight': 1.1}), (0, 2, {'weight': 1}), (0, 3, {'weight': 1}),
+                      (1, 2, {'weight': -1.1}), (1, 3, {'weight': -1.1}), (3, 2, {'weight': -1.1})])
+    return G
+
+
+@pytest.fixture(scope="function")
 def karate() -> nx.Graph:
     import networkx as nx
 
@@ -38,3 +48,14 @@ def relaxed_caveman() -> nx.Graph:
     import networkx as nx
 
     return nx.relaxed_caveman_graph(100, 10, p=0.1, seed=42)
+
+
+@pytest.fixture(scope="session")
+def block_model() -> nx.DiGraph:
+    import networkx as nx
+
+    sizes = [5, 8, 10]
+    probs = [[0.7 , 0.1, 0.05],
+             [0.05, 0.6, 0.05],
+             [0.02, 0.2, 0.5]]
+    return nx.stochastic_block_model(sizes, probs, seed=42, directed=True, selfloops=True)

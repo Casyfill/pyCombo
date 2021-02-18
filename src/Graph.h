@@ -28,7 +28,7 @@
 
 class Graph;
 
-Graph ReadGraphFromFile(const std::string& file_name, double mod_resolution = 1);
+Graph ReadGraphFromFile(const std::string& file_name, double mod_resolution = 1, bool treat_as_modularity = false);
 
 // To save memory we store only modularity matrix and keep m_matrix empty
 class Graph
@@ -36,19 +36,21 @@ class Graph
 public:
 	explicit Graph(bool is_directed = false, double modularity_resolution = 1);
 	Graph(int size, const std::vector<int>& sources, const std::vector<int>& destinations, const std::vector<double>& weights,
-		bool is_directed, double modularity_resolution = 1);
-	Graph(int size, const std::vector<std::tuple<int, int, double>>& edges, bool is_directed, double modularity_resolution = 1);
+		bool is_directed, double modularity_resolution = 1, bool treat_as_modularity = false);
+	Graph(int size, const std::vector<std::tuple<int, int, double>>& edges, bool is_directed,
+		double modularity_resolution = 1, bool treat_as_modularity = false);
+	explicit Graph(const std::vector<std::vector<double>>& matrix,
+		double modularity_resolution = 1, bool treat_as_modularity = false);
+	explicit Graph(std::vector<std::vector<double>>&& matrix,
+		double modularity_resolution = 1, bool treat_as_modularity = false);
 	Graph(const Graph& graph);
 	Graph(Graph&& graph) noexcept;
 	Graph& operator=(Graph graph);
 
-	void CalcModMatrix();
-	int Size() const {return m_size;}
+	int Size() const {return int(m_modularity_matrix.size());}
 	int IsDirected() const {return m_is_directed;}
 	int ModularityResolution() const {return m_modularity_resolution;}
 	int NumberOfCommunities() const {return m_number_of_communities;};
-	double EdgeWeight(int u, int v) const;
-	bool IsCommunityEmpty(int community) const;
 
 	double Modularity() const;
 	std::vector< std::vector<double> > GetModularitySubmatrix(const std::vector<int>& indices) const;
@@ -57,6 +59,7 @@ public:
 	void SetCommunities(const std::vector<int>& new_communities, int number = -1);
 	std::vector<int> Communities() const {return m_communities;};
 	std::vector<int> CommunityIndices(int comm) const;
+	bool IsCommunityEmpty(int community) const;
 
 	void PerformSplit(int origin, int destination, const std::vector<int>& split_communities);
 	bool DeleteCommunityIfEmpty(int community);
@@ -66,20 +69,20 @@ public:
 	friend void swap(Graph& left, Graph& right);
 
 private:
-	void FillMatrix(int size, const std::vector<int>& sources, const std::vector<int>& destinations, const std::vector<double>& weights);
-	void FillMatrix(int size, const std::vector<std::tuple<int, int, double>>& edges);
+	void CalcModMatrix(int size, const std::vector<int>& sources, const std::vector<int>& destinations, const std::vector<double>& weights);
 	void FillModMatrix(int size, const std::vector<int>& sources, const std::vector<int>& destinations, const std::vector<double>& weights);
+	void CalcModMatrix(int size, const std::vector<std::tuple<int, int, double>>& edges);
 	void FillModMatrix(int size, const std::vector<std::tuple<int, int, double>>& edges);
+	void CalcModMatrix(const std::vector<std::vector<double>>& matrix);
+	void FillModMatrix(const std::vector<std::vector<double>>& matrix);
+	void FillModMatrix(std::vector<std::vector<double>>&& matrix);
 
 private:
-	int m_size;
-	double m_total_weight;
 	int m_number_of_communities;
 	bool m_is_directed;
 	// Modularity Resolution Parameter
 	// as per Newman 2016 (https://journals.aps.org/pre/abstract/10.1103/PhysRevE.94.052315)
 	double m_modularity_resolution;
-	std::vector<std::vector<double> > m_matrix;
 	std::vector<std::vector<double> > m_modularity_matrix;
 	std::vector<int> m_communities;
 };

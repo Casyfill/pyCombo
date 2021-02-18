@@ -23,13 +23,14 @@
 #define COMBO_H
 
 #include "Graph.h"
+#include <optional>
 #include <random>
 #include <vector>
 
 class ComboAlgorithm {
 public:
     ComboAlgorithm();
-    explicit ComboAlgorithm(long long random_seed, int num_split_attempts, int fixed_split_step);
+    explicit ComboAlgorithm(std::optional<unsigned long long> random_seed, int num_split_attempts, int fixed_split_step);
     ComboAlgorithm(int num_split_attempts, int fixed_split_step);
     void Run(Graph& graph, int max_comunities = -1);
     void SetFixedSplitStep(int fixed_split_step) {m_fixed_split_step = fixed_split_step;}
