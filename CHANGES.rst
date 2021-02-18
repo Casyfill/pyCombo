@@ -2,13 +2,29 @@
 Changelog
 =========
 
-Version 1.3
+Version 0.0.4
+===========
+
+- support for lists and/or np arrays representing graph
+- treat_as_modularity flag allows pre-computed modularity to be passed as properties
+- random_seed=None by default 
+
+Version 0.0.3
+===========
+
+- c++ source and builds
+- Graph, file execution
+- `execute` inteface
+ 
+
+Version 0.0.2
 ===========
 
 - added coveralls connection
+- poetry
 
 
-Version 1.1
+Version 0.0.1
 ===========
 
 - pyscaffold version
