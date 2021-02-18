@@ -25,7 +25,7 @@ def execute(
     fixed_split_step: int = 0,
     treat_as_modularity: bool = False,
     return_modularity: bool = True,
-    random_seed: int = -1,
+    random_seed: Optional[int] = None,
 ) -> Union[Tuple[dict, float], dict]:
     """
     Partition graph into communities using Combo algorithm.
@@ -54,9 +54,9 @@ def execute(
         `modularity_resolution` is ignored in this case.
     return_modularity : bool, default True
         Indicates if function should return achieved modularity score.
-    random_seed : int, default -1
+    random_seed : int, default None
         Random seed to use.
-        Negative number indicates using some internal default value that is based on time
+        None indicates using some internal default value that is based on time
         and is expected to be different for each call.
 
     Returns

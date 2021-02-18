@@ -14,7 +14,7 @@ std::tuple<std::vector<int>, double> execute_from_file(
 	int num_split_attempts=0,
 	int fixed_split_step=0,
 	bool treat_as_modularity=false,
-	int random_seed=-1)
+	std::optional<int> random_seed=std::nullopt)
 {
 	Graph graph = ReadGraphFromFile(file_name, modularity_resolution, treat_as_modularity);
 	if(graph.Size() <= 0) {
@@ -32,8 +32,8 @@ std::tuple< std::vector<int>, double> execute_from_matrix(
 	int max_communities=-1,
 	int num_split_attempts=0,
 	int fixed_split_step=0,
-	bool treat_as_modularity = false,
-	int random_seed=-1)
+	bool treat_as_modularity=false,
+	std::optional<int> random_seed=std::nullopt)
 {
 	Graph graph(matrix, modularity_resolution, treat_as_modularity);
 	ComboAlgorithm combo(random_seed, num_split_attempts, fixed_split_step);
@@ -49,8 +49,8 @@ std::tuple< std::vector<int>, double> execute(
 	int max_communities=-1,
 	int num_split_attempts=0,
 	int fixed_split_step=0,
-	bool treat_as_modularity = false,
-	int random_seed=-1)
+	bool treat_as_modularity=false,
+	std::optional<int> random_seed=std::nullopt)
 {
 	Graph graph(size, edges, directed, modularity_resolution, treat_as_modularity);
 	ComboAlgorithm combo(random_seed, num_split_attempts, fixed_split_step);
@@ -69,7 +69,7 @@ PYBIND11_MODULE(_combo, m) {
 		py::arg("num_split_attempts") = 0,
 		py::arg("fixed_split_step") = 0,
 		py::arg("treat_as_modularity") = false,
-		py::arg("random_seed") = -1
+		py::arg("random_seed") = std::nullopt
 		);
 
 	m.def("execute_from_matrix", &execute_from_matrix, "execute combo algorithm on a graph passed as matrix",
@@ -79,7 +79,7 @@ PYBIND11_MODULE(_combo, m) {
 		py::arg("num_split_attempts") = 0,
 		py::arg("fixed_split_step") = 0,
 		py::arg("treat_as_modularity") = false,
-		py::arg("random_seed") = -1
+		py::arg("random_seed") = std::nullopt
 		);
 
 	m.def("execute", &execute, "execute combo algorithm on a graph passed as list of edges",
@@ -91,6 +91,6 @@ PYBIND11_MODULE(_combo, m) {
 		py::arg("num_split_attempts") = 0,
 		py::arg("fixed_split_step") = 0,
 		py::arg("treat_as_modularity") = false,
-		py::arg("random_seed") = -1
+		py::arg("random_seed") = std::nullopt
 	);
 }
