@@ -30,7 +30,6 @@ class Graph;
 
 Graph ReadGraphFromFile(const std::string& file_name, double mod_resolution = 1, bool treat_as_modularity = false);
 
-// To save memory we store only modularity matrix and keep m_matrix empty
 class Graph
 {
 public:

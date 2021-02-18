@@ -40,7 +40,7 @@ private:
     const bool m_debug_verify = false;
     // number of split attempts; 0 - autoadjust this number based on m_current_best_gain
     int m_num_split_attempts;
-    // step number to apply predifined split; 0 - use only random splits
+    // step number to apply predefined split; 0 - use only random splits
     // if >0 sets up the usage of 6 fixed type splits on every m_fixed_split_step
     int m_fixed_split_step;
     double m_autoC1;
