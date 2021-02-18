@@ -53,7 +53,9 @@ All copiryghts and licensing is same as covered in the initial package
 - [x] Assert reproducibility (random seed)
 - [x] Setup pybind11 binding
 - [x] Directed graph
+- [ ] Add documentation
 - [ ] Full testing
+- [ ] Clean and publish to PyPI
 - [ ] Performance (speed) benchmarks
 - [ ] Exceptions
 - [ ] Logging
