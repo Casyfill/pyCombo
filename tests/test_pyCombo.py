@@ -94,12 +94,22 @@ def _get_modularity_matrix(graph, symmetrize=False):
     return Q
 
 
-def test_mod_matrix(karate):
+def test_mod_matrix_as_list(karate):
     from pycombo import execute
 
     partition_g, modularity_g = execute(karate, random_seed=42)
     mod_matrix = _get_modularity_matrix(karate)
     partition_m, modularity_m = execute(mod_matrix.tolist(), treat_as_modularity=True, random_seed=42)
+    assert modularity_m == pytest.approx(modularity_g, 0.000001), (modularity_m, modularity_g)
+    assert _partitionGroup(partition_g) == _partitionGroup(partition_m)
+
+
+def test_mod_matrix_as_numpy(karate):
+    from pycombo import execute
+
+    partition_g, modularity_g = execute(karate, random_seed=42)
+    mod_matrix = _get_modularity_matrix(karate)
+    partition_m, modularity_m = execute(mod_matrix, treat_as_modularity=True, random_seed=42)
     assert modularity_m == pytest.approx(modularity_g, 0.000001), (modularity_m, modularity_g)
     assert _partitionGroup(partition_g) == _partitionGroup(partition_m)
 

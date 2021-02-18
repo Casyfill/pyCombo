@@ -79,7 +79,7 @@ def execute(
 
         partition = {i: community for i, community in enumerate(community_labels)}
 
-    elif type(graph) is list:
+    elif type(graph) is list or type(graph).__name__ == 'ndarray':
         community_labels, modularity = comboCPP.execute_from_matrix(
             matrix=graph,
             max_communities=max_communities,
