@@ -51,6 +51,7 @@ def execute(
         Indicates if edge weights should be treated as modularity scores.
         If True, the algorithm solves clique partitioning problem over the given graph,
         treated as modularity graph (matrix).
+        For example, this allows users to provide their own custom 'modularity' matrix.
         `modularity_resolution` is ignored in this case.
     return_modularity : bool, default True
         Indicates if function should return achieved modularity score.
