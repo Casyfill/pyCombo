@@ -1,4 +1,4 @@
-[submodule "src/source"]
-	path = src/source
-	url = https://github.com/Alexander-Belyi/Combo@v2.0
+[submodule "src/Combo"]
+	path = src/Combo
+	url = https://github.com/Alexander-Belyi/Combo
 	branch = v2.0
