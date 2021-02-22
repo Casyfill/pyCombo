@@ -9,7 +9,7 @@ from distutils.core import Distribution
 ext_modules = [
     Pybind11Extension(
         "pycombo._combo",
-        sources=["src/source/Graph.cpp", "src/source/Combo.cpp", "src/Binder.cpp"],
+        sources=["src/Combo/Graph.cpp", "src/Combo/Combo.cpp", "src/Binder.cpp"],
     )
 ]
 

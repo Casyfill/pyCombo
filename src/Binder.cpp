@@ -1,8 +1,8 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-#include "Graph.h"
-#include "Combo.h"
+#include "Combo/Graph.h"
+#include "Combo/Combo.h"
 
 namespace py = pybind11;
 
