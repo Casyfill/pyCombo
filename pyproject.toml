@@ -1,9 +1,16 @@
 [tool.poetry]
 name = "pycombo"
 version = "0.0.5"
-description = "Python wrapper around Combo network partitioning algorythm (C++)"
+description = "Python wrapper around Combo network partitioning algorithm (C++)"
 authors = ["Philipp <casyfill@gmail.com>"]
 license = "MIT"
+keywords = ["network", "community"]
+readme = "README.md"
+homepage = "https://github.com/Casyfill/pyCombo"
+repository = "https://github.com/Casyfill/pyCombo"
+include = [
+    "LICENSE",
+]
 
 include = [
     # C++ sources must be included in the sdist distributions
