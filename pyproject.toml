@@ -1,9 +1,32 @@
 [tool.poetry]
 name = "pycombo"
-version = "0.0.10"
+version = "0.0.11"
 description = "Python wrapper around Combo network partitioning algorythm (C++)"
 authors = ["Philipp <casyfill@gmail.com>"]
 license = "MIT"
+homepage = "https://github.com/Casyfill/pyCombo"
+project_urls = {
+    "Bug Tracker": "https://github.com/Casyfill/pyCombo/issues",
+    "Source Code": "https://github.com/Casyfill/pyCombo",
+}
+platforms = ["Linux", "Mac OSX", "Windows", "Unix"]
+keywords = ["Networks", "Graph Theory", "Mathematics", "network", "graph", "discrete mathematics", "math"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Scientific/Engineering :: Physics",
+]
 
 include = [
     # C++ sources must be included in the sdist distributions
