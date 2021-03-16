@@ -34,7 +34,7 @@ include = [
 
 [tool.poetry.urls]
 "Bug Tracker" = "https://github.com/Casyfill/pyCombo/issues"
-"Source Code" =  "https://github.com/Casyfill/pyCombo",
+"Source Code" =  "https://github.com/Casyfill/pyCombo"
 
 [tool.poetry.build]
 script = "build.py"
