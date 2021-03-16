@@ -5,10 +5,6 @@ description = "Python wrapper around Combo network partitioning algorythm (C++)"
 authors = ["Philipp <casyfill@gmail.com>"]
 license = "MIT"
 homepage = "https://github.com/Casyfill/pyCombo"
-project_urls = {
-    "Bug Tracker": "https://github.com/Casyfill/pyCombo/issues",
-    "Source Code": "https://github.com/Casyfill/pyCombo",
-}
 platforms = ["Linux", "Mac OSX", "Windows", "Unix"]
 keywords = ["Networks", "Graph Theory", "Mathematics", "network", "graph", "discrete mathematics", "math"]
 classifiers = [
@@ -35,6 +31,10 @@ include = [
     {path = "pycombo/*.so", format = "wheel"},
     {path = "pycombo/*.pyd", format = "wheel"},
 ]
+
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/Casyfill/pyCombo/issues"
+"Source Code" =  "https://github.com/Casyfill/pyCombo",
 
 [tool.poetry.build]
 script = "build.py"
