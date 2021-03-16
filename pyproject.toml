@@ -1,9 +1,10 @@
 [tool.poetry]
 name = "pycombo"
-version = "0.0.11"
+version = "0.1.00"
 description = "Python wrapper around Combo network partitioning algorythm (C++)"
 authors = ["Philipp <casyfill@gmail.com>"]
 license = "MIT"
+readme = "README.md"
 homepage = "https://github.com/Casyfill/pyCombo"
 keywords = ["Networks", "Graph Theory", "Mathematics", "network", "graph", "discrete mathematics", "math"]
 classifiers = [
