@@ -5,7 +5,6 @@ description = "Python wrapper around Combo network partitioning algorythm (C++)"
 authors = ["Philipp <casyfill@gmail.com>"]
 license = "MIT"
 homepage = "https://github.com/Casyfill/pyCombo"
-platforms = ["Linux", "Mac OSX", "Windows", "Unix"]
 keywords = ["Networks", "Graph Theory", "Mathematics", "network", "graph", "discrete mathematics", "math"]
 classifiers = [
     "Development Status :: 4 - Beta",
