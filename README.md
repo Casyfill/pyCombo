@@ -3,16 +3,16 @@
 
 pyCombo is a python wrapper around [C++ implementation](https://github.com/Alexander-Belyi/Combo) of the [network] community detection algorithm called "Combo".
 
-Details of the algorithm are described in the paper "General optimization technique for high-quality community detection in the paper:
+Details of the algorithm are described in the paper "General optimization technique for high-quality community detection":
 
 ```
 Sobolevsky, S., Campari, R., Belyi, A. and Ratti, C., 2014. General optimization technique for high-quality community detection in complex networks. Physical Review E, 90(1), p.012811.
 ```
 
 ## Installation
-You can install current version of pycombo from github by executing
+You can install the latest release of pycombo from PyPI by executing
 ```bash
-python -m pip install https://github.com/Casyfill/pyCombo/archive/master.tar.gz#egg=pycombo
+python -m pip install pycombo
 ```
 
 ## Example
@@ -62,7 +62,7 @@ All copiryghts and licensing is same as covered in the initial package
 
 
 # Notes and issues
-- for now c++ sources duplicate https://github.com/Alexander-Belyi/Combo
+For local builds or development clone https://github.com/Alexander-Belyi/Combo into src/Combo.
 
 # Development
 Feel free to fork this repo and submit pull requests.
