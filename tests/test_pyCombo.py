@@ -130,3 +130,30 @@ def test_clique_partitioning(test_cp_graph):
     partition, modularity = pycombo.execute(test_cp_graph, treat_as_modularity=True)
     assert modularity == 1.1, modularity
     assert _partitionGroup(partition) == _partitionGroup({0: 0, 1: 0, 2: 1, 3: 2})
+
+
+def test_max_communities(karate):
+    import pycombo
+
+    partition_None, modularity_None = pycombo.execute(karate)
+    partition_0, modularity_0 = pycombo.execute(karate, max_communities=0)
+    assert modularity_None == pytest.approx(modularity_0, 0.000001), (modularity_None, modularity_0)
+    assert _partitionGroup(partition_None) == _partitionGroup(partition_0)
+    partition_minus1, modularity_minus1 = pycombo.execute(karate, max_communities=-1)
+    assert modularity_None == pytest.approx(modularity_minus1, 0.000001), (modularity_None, modularity_minus1)
+    assert _partitionGroup(partition_None) == _partitionGroup(partition_minus1)
+    partition_minus10, modularity_minus10 = pycombo.execute(karate, max_communities=-10)
+    assert modularity_None == pytest.approx(modularity_minus10, 0.000001), (modularity_None, modularity_minus10)
+    assert _partitionGroup(partition_None) == _partitionGroup(partition_minus10)
+    partition_1, modularity_1 = pycombo.execute(karate, max_communities=1)
+    assert modularity_1 == pytest.approx(0, 0.000001), modularity_1
+    assert _partitionGroup(partition_1) == [list(range(len(karate)))]
+    partition_2, modularity_2 = pycombo.execute(karate, max_communities=2)
+    assert modularity_2 == pytest.approx(0.371795, 0.000001), modularity_2
+    assert _partitionGroup(partition_2) == [list(range(8)) + list(range(9, 14)) + [16, 17, 19, 21],
+                                            [8, 14, 15, 18, 20] + list(range(22, 34))]
+    partition_3, modularity_3 = pycombo.execute(karate, max_communities=3)
+    assert modularity_3 == pytest.approx(0.402038, 0.000001), modularity_3
+    assert _partitionGroup(partition_3) == [list(range(4)) + [7, 9, 11, 12, 13, 17, 19, 21],
+                                            [4, 5, 6, 10, 16],
+                                            [8, 14, 15, 18, 20] + list(range(22, 34))]
