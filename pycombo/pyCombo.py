@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 def execute(
     graph,
     weight: Optional[str] = "weight",
-    max_communities: int = -1,
+    max_communities: int = None,
     modularity_resolution: int = 1,
     num_split_attempts: int = 0,
     fixed_split_step: int = 0,
@@ -38,8 +38,8 @@ def execute(
     weight : str, default 'weight'
         Graph edges property to use as weights. If None, graph assumed to be unweighted.
         Ignored if graph is passed as string (path to the file).
-    max_communities : int, default -1
-        Maximum number of communities. If -1, assume to be infinite.
+    max_communities : int, default None
+        Maximum number of communities. If <= 0 or None, assume to be infinite.
     modularity_resolution : float, default 1.0
         Modularity resolution parameter.
     num_split_attempts : int, default 0
@@ -67,6 +67,9 @@ def execute(
     modularity : float
         Achieved modularity value. Only returned if return_modularity=True
     """
+    if max_communities is not None and max_communities <= 0:
+        max_communities = None
+
     if type(graph) is str:
         community_labels, modularity = comboCPP.execute_from_file(
             graph_path=graph,
