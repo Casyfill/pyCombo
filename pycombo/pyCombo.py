@@ -19,11 +19,14 @@ logger = logging.getLogger(__name__)
 def execute(
     graph,
     weight: Optional[str] = "weight",
-    max_communities: int = None,
+    max_communities: Optional[int] = None,
     modularity_resolution: int = 1,
     num_split_attempts: int = 0,
     fixed_split_step: int = 0,
+    start_separate: bool = False,
     treat_as_modularity: bool = False,
+    info_output_level: int = 0,
+    intermediate_results_path: Optional[str] = None,
     return_modularity: bool = True,
     random_seed: Optional[int] = None,
 ) -> Union[Tuple[dict, float], dict]:
@@ -47,12 +50,20 @@ def execute(
     fixed_split_step : int, default 0
         Step number to apply predefined split. If 0, use only random splits,
         if >0 sets up the usage of 6 fixed type splits on every fixed_split_step.
+    start_separate : bool, default False
+        Indicates if Combo should start from assigning each node into its own separate community.
+        This could help to achieve higher modularity, but it makes execution much slower.
     treat_as_modularity : bool, default False
         Indicates if edge weights should be treated as modularity scores.
         If True, the algorithm solves clique partitioning problem over the given graph,
         treated as modularity graph (matrix).
         For example, this allows users to provide their own custom 'modularity' matrix.
         `modularity_resolution` is ignored in this case.
+    info_output_level : int, default 0
+        Indicates how much progress information Combo should print out.
+    intermediate_results_path : str, default None
+        Path to the file where community assignments will be saved on each iteration.
+        If None or empty, intermediate results will not be saved.
     return_modularity : bool, default True
         Indicates if function should return achieved modularity score.
     random_seed : int, default None
@@ -77,7 +88,10 @@ def execute(
             modularity_resolution=modularity_resolution,
             num_split_attempts=num_split_attempts,
             fixed_split_step=fixed_split_step,
+            start_separate=start_separate,
             treat_as_modularity=treat_as_modularity,
+            info_output_level=info_output_level,
+            intermediate_results_path=intermediate_results_path,
             random_seed=random_seed,
         )
 
@@ -90,7 +104,10 @@ def execute(
             modularity_resolution=modularity_resolution,
             num_split_attempts=num_split_attempts,
             fixed_split_step=fixed_split_step,
+            start_separate=start_separate,
             treat_as_modularity=treat_as_modularity,
+            info_output_level=info_output_level,
+            intermediate_results_path=intermediate_results_path,
             random_seed=random_seed,
         )
 
@@ -110,7 +127,10 @@ def execute(
             modularity_resolution=modularity_resolution,
             num_split_attempts=num_split_attempts,
             fixed_split_step=fixed_split_step,
+            start_separate=start_separate,
             treat_as_modularity=treat_as_modularity,
+            info_output_level=info_output_level,
+            intermediate_results_path=intermediate_results_path,
             random_seed=random_seed,
         )
 

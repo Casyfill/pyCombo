@@ -157,3 +157,35 @@ def test_max_communities(karate):
     assert _partitionGroup(partition_3) == [list(range(4)) + [7, 9, 11, 12, 13, 17, 19, 21],
                                             [4, 5, 6, 10, 16],
                                             [8, 14, 15, 18, 20] + list(range(22, 34))]
+
+
+def test_start_separate(test_start_sep_graph):
+    import pycombo
+
+    partition, modularity = pycombo.execute(test_start_sep_graph, treat_as_modularity=True)
+    assert modularity == 2.0, modularity
+    partition_sep, modularity_sep = pycombo.execute(test_start_sep_graph, start_separate=True, treat_as_modularity=True)
+    assert modularity_sep == 2.2, modularity_sep
+
+
+def test_output_info(test_start_sep_graph, capfd):
+    import pycombo
+
+    _, _ = pycombo.execute(test_start_sep_graph, start_separate=True, treat_as_modularity=True)
+    captured = capfd.readouterr()
+    assert captured.err == ""
+    assert captured.out == ""
+    _, _ = pycombo.execute(test_start_sep_graph, start_separate=True, treat_as_modularity=True, info_output_level=1)
+    captured = capfd.readouterr()
+    assert captured.err == ""
+    info_lines = captured.out.split('\n')
+    assert info_lines[-2] == "Finished with 4 communities, achieved modularity = 2.2"
+    assert info_lines[-1] == ""
+
+
+def test_intermediate_results(karate, tmp_path):
+    import pycombo
+
+    file = tmp_path / 'tmp_communities.txt'
+    partition, _ = pycombo.execute(karate, intermediate_results_path=str(file))
+    assert file.read_text().strip() == "\n".join(map(str, list(zip(*sorted(partition.items())))[1]))

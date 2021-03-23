@@ -37,6 +37,18 @@ def test_cp_graph():
 
 
 @pytest.fixture(scope="function")
+def test_start_sep_graph():
+    """test graph with known clique partition that needs start_separate"""
+    G = nx.Graph()
+    G.add_nodes_from(range(6))
+    G.add_edges_from([(0, 1, {'weight': 1.0}), (0, 2, {'weight': -10}), (0, 3, {'weight': 1}), (0, 4, {'weight': -10}), (0, 5, {'weight': -10}),
+                      (1, 2, {'weight': 1.2}), (1, 3, {'weight': -10}), (1, 4, {'weight': -10}), (1, 5, {'weight': -10}),
+                      (2, 3, {'weight': 1}), (2, 4, {'weight': -1}), (2, 5, {'weight': 0.5}),
+                      (3, 4, {'weight': 0.5}), (3, 5, {'weight': -1})])
+    return G
+
+
+@pytest.fixture(scope="function")
 def karate() -> nx.Graph:
     import networkx as nx
 
