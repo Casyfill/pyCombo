@@ -62,7 +62,15 @@ All copiryghts and licensing is same as covered in the initial package
 
 
 # Notes and issues
-For local builds or development clone https://github.com/Alexander-Belyi/Combo into src/Combo.
+This repo uses https://github.com/Alexander-Belyi/Combo as submodule.
+So for local development, clone with `--recurse-submodules` flag, as:
+```bash
+git clone --recurse-submodules https://github.com/Casyfill/pyCombo
+```
+Or, if you've already cloned it, run:
+```bash
+git submodule update --init --recursive
+```
 
 # Development
 Feel free to fork this repo and submit pull requests.
