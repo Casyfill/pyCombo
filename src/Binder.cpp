@@ -13,7 +13,10 @@ std::tuple<std::vector<size_t>, double> execute_from_file(
 	std::optional<size_t> max_communities=std::nullopt,
 	int num_split_attempts=0,
 	int fixed_split_step=0,
+	bool start_separate=false,
 	bool treat_as_modularity=false,
+	int info_output_level=0,
+	std::optional<std::string> intermediate_results_path=std::nullopt,
 	std::optional<int> random_seed=std::nullopt)
 {
 	Graph graph = ReadGraphFromFile(file_name, modularity_resolution, treat_as_modularity);
@@ -21,8 +24,8 @@ std::tuple<std::vector<size_t>, double> execute_from_file(
 		std::cerr << "Error: graph is empty" << std::endl;
 		return {std::vector<size_t>(), -1.0};
 	}
-	ComboAlgorithm combo(random_seed, num_split_attempts, fixed_split_step);
-	combo.Run(graph, max_communities);
+	ComboAlgorithm combo(random_seed, num_split_attempts, fixed_split_step, info_output_level);
+	combo.Run(graph, max_communities, start_separate, intermediate_results_path);
 	return {graph.Communities(), graph.Modularity()};
 }
 
@@ -32,12 +35,15 @@ std::tuple< std::vector<size_t>, double> execute_from_matrix(
 	std::optional<size_t> max_communities=std::nullopt,
 	int num_split_attempts=0,
 	int fixed_split_step=0,
+	bool start_separate=false,
 	bool treat_as_modularity=false,
+	int info_output_level=0,
+	std::optional<std::string> intermediate_results_path=std::nullopt,
 	std::optional<int> random_seed=std::nullopt)
 {
 	Graph graph(matrix, modularity_resolution, treat_as_modularity);
-	ComboAlgorithm combo(random_seed, num_split_attempts, fixed_split_step);
-	combo.Run(graph, max_communities);
+	ComboAlgorithm combo(random_seed, num_split_attempts, fixed_split_step, info_output_level);
+	combo.Run(graph, max_communities, start_separate, intermediate_results_path);
 	return {graph.Communities(), graph.Modularity()};
 }
 
@@ -49,12 +55,15 @@ std::tuple< std::vector<size_t>, double> execute(
 	std::optional<size_t> max_communities=std::nullopt,
 	int num_split_attempts=0,
 	int fixed_split_step=0,
+	bool start_separate=false,
 	bool treat_as_modularity=false,
+	int info_output_level=0,
+	std::optional<std::string> intermediate_results_path=std::nullopt,
 	std::optional<int> random_seed=std::nullopt)
 {
 	Graph graph(size, edges, directed, modularity_resolution, treat_as_modularity);
-	ComboAlgorithm combo(random_seed, num_split_attempts, fixed_split_step);
-	combo.Run(graph, max_communities);
+	ComboAlgorithm combo(random_seed, num_split_attempts, fixed_split_step, info_output_level);
+	combo.Run(graph, max_communities, start_separate, intermediate_results_path);
 	return {graph.Communities(), graph.Modularity()};
 }
 
@@ -68,7 +77,10 @@ PYBIND11_MODULE(_combo, m) {
 		py::arg("max_communities") = std::nullopt,
 		py::arg("num_split_attempts") = 0,
 		py::arg("fixed_split_step") = 0,
+		py::arg("start_separate") = false,
 		py::arg("treat_as_modularity") = false,
+		py::arg("info_output_level") = 0,
+		py::arg("intermediate_results_path") = std::nullopt,
 		py::arg("random_seed") = std::nullopt
 		);
 
@@ -78,7 +90,10 @@ PYBIND11_MODULE(_combo, m) {
 		py::arg("max_communities") = std::nullopt,
 		py::arg("num_split_attempts") = 0,
 		py::arg("fixed_split_step") = 0,
+		py::arg("start_separate") = false,
 		py::arg("treat_as_modularity") = false,
+		py::arg("info_output_level") = 0,
+		py::arg("intermediate_results_path") = std::nullopt,
 		py::arg("random_seed") = std::nullopt
 		);
 
@@ -90,7 +105,10 @@ PYBIND11_MODULE(_combo, m) {
 		py::arg("max_communities") = std::nullopt,
 		py::arg("num_split_attempts") = 0,
 		py::arg("fixed_split_step") = 0,
+		py::arg("start_separate") = false,
 		py::arg("treat_as_modularity") = false,
+		py::arg("info_output_level") = 0,
+		py::arg("intermediate_results_path") = std::nullopt,
 		py::arg("random_seed") = std::nullopt
 	);
 }
