@@ -175,7 +175,7 @@ def test_output_info(test_start_sep_graph, capfd):
     captured = capfd.readouterr()
     assert captured.err == ""
     assert captured.out == ""
-    _, _ = pycombo.execute(test_start_sep_graph, start_separate=True, treat_as_modularity=True, info_output_level=1)
+    _, _ = pycombo.execute(test_start_sep_graph, start_separate=True, treat_as_modularity=True, verbose=1)
     captured = capfd.readouterr()
     assert captured.err == ""
     info_lines = captured.out.split('\n')
