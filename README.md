@@ -28,6 +28,16 @@ More examples could be found in [example](https://github.com/Casyfill/pyCombo/tr
 
 ## Development
 
+This repo uses https://github.com/Alexander-Belyi/Combo as a [git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
+So for local development, clone with `--recurse-submodules` flag, as:
+```bash
+git clone --recurse-submodules https://github.com/Casyfill/pyCombo
+```
+Or, if you've already cloned it without `--recurse-submodules`, run:
+```bash
+git submodule update --init --recursive
+```
+
 Package is built and managed via `poetry`.
 - to install dev version, run `poetry install`
 - To build distributions run `poetry build`.
