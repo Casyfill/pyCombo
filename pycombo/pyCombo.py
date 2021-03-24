@@ -25,7 +25,7 @@ def execute(
     fixed_split_step: int = 0,
     start_separate: bool = False,
     treat_as_modularity: bool = False,
-    info_output_level: int = 0,
+    verbose: int = 0,
     intermediate_results_path: Optional[str] = None,
     return_modularity: bool = True,
     random_seed: Optional[int] = None,
@@ -59,8 +59,9 @@ def execute(
         treated as modularity graph (matrix).
         For example, this allows users to provide their own custom 'modularity' matrix.
         `modularity_resolution` is ignored in this case.
-    info_output_level : int, default 0
+    verbose : int, default 0
         Indicates how much progress information Combo should print out.
+        For now Combo has only one level starting at verbose >= 1.
     intermediate_results_path : str, default None
         Path to the file where community assignments will be saved on each iteration.
         If None or empty, intermediate results will not be saved.
@@ -90,7 +91,7 @@ def execute(
             fixed_split_step=fixed_split_step,
             start_separate=start_separate,
             treat_as_modularity=treat_as_modularity,
-            info_output_level=info_output_level,
+            verbose=verbose,
             intermediate_results_path=intermediate_results_path,
             random_seed=random_seed,
         )
@@ -106,7 +107,7 @@ def execute(
             fixed_split_step=fixed_split_step,
             start_separate=start_separate,
             treat_as_modularity=treat_as_modularity,
-            info_output_level=info_output_level,
+            verbose=verbose,
             intermediate_results_path=intermediate_results_path,
             random_seed=random_seed,
         )
@@ -129,7 +130,7 @@ def execute(
             fixed_split_step=fixed_split_step,
             start_separate=start_separate,
             treat_as_modularity=treat_as_modularity,
-            info_output_level=info_output_level,
+            verbose=verbose,
             intermediate_results_path=intermediate_results_path,
             random_seed=random_seed,
         )
