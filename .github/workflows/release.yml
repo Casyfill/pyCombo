@@ -7,13 +7,15 @@ on:
     types: [published, edited, released]
 
 jobs:
-  test:
+  test_and_publish:
     # The type of runner that the job will run on
-    runs-on: macos-latest
+    if: "!github.event.release.prerelease"
     strategy:
       matrix:
         python-version: [3.7, 3.8, 3.9]
         poetry-version: [1.1.4]
+        ost: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -44,8 +46,8 @@ jobs:
         run: poetry run pip --version >/dev/null 2>&1 || rm -rf .venv
 
       - name: Install dependencies
-        run: |
-            poetry install
+        run: poetry install
+
       - name: Lint with flake8
         run: |
             # stop the build if there are Python syntax errors or undefined names
@@ -54,42 +56,8 @@ jobs:
         run: |
             poetry run pytest
 
-  publish:
-    if: "!github.event.release.prerelease"
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-        with:
-          submodules: recursive
-
-      - name: Set up Python
-        uses: actions/setup-python@v1
-        with:
-          python-version: "3.7"
-
-      - name: Set up Poetry 1.1.4
-        uses: abatilo/actions-poetry@v2.0.0
-        with:
-          poetry-version: 1.1.4
-
-      - name: Configure poetry
-        run: poetry config virtualenvs.in-project true
-
-      - name: Set up cache
-        uses: actions/cache@v1
-        id: cache
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ steps.full-python-version.outputs.version }}-${{ hashFiles('**/poetry.lock') }}
-
-      - name: Ensure cache is healthy
-        if: steps.cache.outputs.cache-hit == 'true'
-        run: poetry run pip --version >/dev/null 2>&1 || rm -rf .venv
-
-      - name: Install Dependencies
-        run: poetry install
+      - name: Build
+        run: poetry build
 
       - run: poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
 
