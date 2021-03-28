@@ -6,7 +6,7 @@ on:
 
 jobs:
 
-  test:
+  test_and_publish:
     # The type of runner that the job will run on
     runs-on: macos-latest
     strategy:
@@ -53,42 +53,6 @@ jobs:
         run: |
             poetry run pytest
 
-  publish:
-    runs-on: ubuntu-latest
-    needs: test
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-        with:
-          submodules: recursive
-
-      - name: Set up Python
-        uses: actions/setup-python@v1
-        with:
-          python-version: "3.7"
-
-      - name: Set up Poetry 1.1.4
-        uses: abatilo/actions-poetry@v2.0.0
-        with:
-          poetry-version: 1.1.4
-
-      - name: Configure poetry
-        run: poetry config virtualenvs.in-project true
-
-      - name: Set up cache
-        uses: actions/cache@v1
-        id: cache
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ steps.full-python-version.outputs.version }}-${{ hashFiles('**/poetry.lock') }}
-
-      - name: Ensure cache is healthy
-        if: steps.cache.outputs.cache-hit == 'true'
-        run: poetry run pip --version >/dev/null 2>&1 || rm -rf .venv
-
-      - name: Install Dependencies
-        run: poetry install
-
       - name: Build
         run: poetry build
 
@@ -96,4 +60,4 @@ jobs:
       - run: poetry config pypi-token.testpypi ${{ secrets.TEST_PYPI_TOKEN }}
 
       - name: Publish package
-        run: poetry publish --no-interaction -r testpypi -vvv
+        run: poetry publish --no-interaction --dry-run -r testpypi -vvv
