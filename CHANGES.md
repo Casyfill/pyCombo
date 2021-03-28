@@ -1,6 +1,12 @@
 Changelog
 =========
 
+### 1.0.04
+- attempting to publish multiplatform wheels:
+    - for python 3.7, 3.8, 3.9
+    - for ubuntu-latest, macos-latest, windows-latest
+
+NOTE: to be specified, perhaps should add arm
 
 ### 1.0.03
 - fixing (hopefully) `poetry publish build` by adding `--no-interaction`
