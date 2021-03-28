@@ -1,6 +1,9 @@
 Changelog
 =========
 
+
+### 1.0.03
+- fixing (hopefully) `poetry publish build` by adding `--no-interaction`
 ### 1.0.02
 
 - Added verbose (int) parameter to track progress.
