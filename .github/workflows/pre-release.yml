@@ -60,7 +60,7 @@ jobs:
         run: poetry build
 
       - name: Build wheel
-        if: "( ${{ matrix.os }} != 'ubuntu-latest' ) || ( ${{ matrix.python-version }} != 3.7 )"
+        if: "!( ${{ matrix.os }} == 'ubuntu-latest' ) && ( ${{ matrix.python-version }} == 3.7 )"
         run: poetry build -f wheel
 
       - run: poetry config repositories.testpypi https://test.pypi.org/legacy/
