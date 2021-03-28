@@ -55,8 +55,13 @@ jobs:
         run: |
             poetry run pytest
 
-      - name: Build
+      - name: Build all
+        if: "( ${{ matrix.os }} == 'ubuntu-latest' ) && ( ${{ matrix.python-version }} == 3.7 )"
         run: poetry build
+
+      - name: Build wheel
+        if: "( ${{ matrix.os }} != 'ubuntu-latest' ) || ( ${{ matrix.python-version }} != 3.7 )"
+        run: poetry build -f wheel
 
       - run: poetry config repositories.testpypi https://test.pypi.org/legacy/
       - run: poetry config pypi-token.testpypi ${{ secrets.TEST_PYPI_TOKEN }}
