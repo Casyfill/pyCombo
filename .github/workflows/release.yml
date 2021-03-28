@@ -1,8 +1,9 @@
 name: Publish to PyPI
 
 on:
+
   release:
-    types: [published, edited, released]
+    types: [released]
 
 jobs:
   test_and_publish:
