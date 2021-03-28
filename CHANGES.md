@@ -4,6 +4,9 @@ Changelog
 
 ### 1.0.03
 - fixing (hopefully) `poetry publish build` by adding `--no-interaction`
+- test job now only runs on PR
+- publish_test now only runs on merge to `master`, and incorporates matrix testing
+- publish now works on tags with `*.*.*` pattern and incorporates matrix testing
 ### 1.0.02
 
 - Added verbose (int) parameter to track progress.
