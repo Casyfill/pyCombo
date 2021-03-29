@@ -61,7 +61,7 @@ jobs:
       - name: Archive production artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: dist-without-markdown
+          name: wheels
           path: |
             build
 
@@ -74,8 +74,8 @@ jobs:
 
       - uses: actions/download-artifact@v2
         with:
-          name: my-artifact
-          path: buid/
+          name: wheels
+          path: build/
 
       - name: Display structure of downloaded files
         run: ls -R
