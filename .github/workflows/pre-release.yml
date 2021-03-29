@@ -63,7 +63,7 @@ jobs:
         with:
           name: wheels
           path: |
-            build
+            dist
 
 
   gather_n_publish:
@@ -85,7 +85,14 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: wheels
-          path: build/
+          path: dist/
+
+      - name: Install dependencies
+        run: |
+            poetry install
+
+      - name: Build sdist
+        run: poetry build -f sdist
 
       - name: Display structure of downloaded files
         run: ls -R

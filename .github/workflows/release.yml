@@ -63,7 +63,7 @@ jobs:
         with:
           name: wheels
           path: |
-            build
+            dist
 
 
   gather_n_publish:
@@ -97,11 +97,11 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: wheels
-          path: build/
+          path: dist/
 
       - name: Display structure of downloaded files
         run: ls -la
-        working-directory: build/
+        working-directory: dist/
 
       - name: Install dependencies
         run: |
