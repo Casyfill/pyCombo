@@ -6,7 +6,7 @@ on:
 
 jobs:
 
-  test_and_publish:
+  test_and_build:
     # The type of runner that the job will run on
 
     strategy:
@@ -55,13 +55,34 @@ jobs:
         run: |
             poetry run pytest
 
-      - name: Build all
-        if: "( ${{ matrix.os }} == 'ubuntu-latest' ) && ( ${{ matrix.python-version }} == 3.7 )"
-        run: poetry build
-
-      - name: Build wheel
-        if: "!( ${{ matrix.os }} == 'ubuntu-latest' ) && ( ${{ matrix.python-version }} == 3.7 )"
+      - name: Build
         run: poetry build -f wheel
+
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist-without-markdown
+          path: |
+            build
+
+
+  gather_n_publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: my-artifact
+          path: buid/
+
+      - name: Display structure of downloaded files
+        run: ls -R
+        working-directory: build/
+
+      - name: Build sdist
+        run: poetry build -f sdist
 
       - run: poetry config repositories.testpypi https://test.pypi.org/legacy/
       - run: poetry config pypi-token.testpypi ${{ secrets.TEST_PYPI_TOKEN }}
