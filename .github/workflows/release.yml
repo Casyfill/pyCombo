@@ -99,9 +99,6 @@ jobs:
           name: wheels
           path: dist/
 
-      - name: Display structure of downloaded files
-        run: ls -la
-        working-directory: dist/
 
       - name: Install dependencies
         run: |
@@ -109,6 +106,10 @@ jobs:
 
       - name: Build sdist
         run: poetry build -f sdist
+
+      - name: Display structure of downloaded files
+        run: ls -la
+        working-directory: dist/
 
       - run: poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
 
