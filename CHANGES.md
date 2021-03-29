@@ -1,8 +1,8 @@
 Changelog
 =========
 
-### 1.0.04
-- attempting to publish multiplatform wheels:
+### 1.0.05
+- attempting to publish multiplatform wheels using artifacts:
     - for python 3.7, 3.8, 3.9
     - for ubuntu-latest, macos-latest, windows-latest
 

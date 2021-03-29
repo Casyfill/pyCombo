@@ -64,7 +64,6 @@ jobs:
           name: wheels
           path: |
             build
-            !build/temp.*
 
 
   gather_n_publish:
