@@ -68,6 +68,7 @@ jobs:
 
   gather_n_publish:
     runs-on: ubuntu-latest
+    needs: test_and_build
 
     steps:
       - uses: actions/checkout@v2
