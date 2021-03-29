@@ -82,17 +82,6 @@ jobs:
         with:
           poetry-version: 1.1.4
 
-      - name: Set up cache
-        uses: actions/cache@v1
-        id: cache
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ steps.full-python-version.outputs.version }}-${{ hashFiles('**/poetry.lock') }}
-
-      - name: Ensure cache is healthy
-        if: steps.cache.outputs.cache-hit == 'true'
-        run: poetry run pip --version >/dev/null 2>&1 || rm -rf .venv
-
       - uses: actions/download-artifact@v2
         with:
           name: wheels
@@ -102,12 +91,6 @@ jobs:
         run: ls -la
         working-directory: build/
 
-      - name: Install dependencies
-        run: |
-            poetry install
-
-      - name: Build sdist
-        run: poetry build -f sdist
 
       - run: poetry config repositories.testpypi https://test.pypi.org/legacy/
       - run: poetry config pypi-token.testpypi ${{ secrets.TEST_PYPI_TOKEN }}
