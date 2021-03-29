@@ -64,6 +64,7 @@ jobs:
           name: wheels
           path: |
             build
+            !build/temp.*
 
 
   gather_n_publish:
@@ -73,14 +74,38 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v2
+        with:
+           python-version: 3.7
+      - name: Set up Poetry 1.1.4
+        uses: abatilo/actions-poetry@v2.0.0
+        with:
+          poetry-version: 1.1.4
+
+      - name: Set up cache
+        uses: actions/cache@v1
+        id: cache
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ steps.full-python-version.outputs.version }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Ensure cache is healthy
+        if: steps.cache.outputs.cache-hit == 'true'
+        run: poetry run pip --version >/dev/null 2>&1 || rm -rf .venv
+
       - uses: actions/download-artifact@v2
         with:
           name: wheels
           path: build/
 
       - name: Display structure of downloaded files
-        run: ls -R
+        run: ls -la
         working-directory: build/
+
+      - name: Install dependencies
+        run: |
+            poetry install
 
       - name: Build sdist
         run: poetry build -f sdist
