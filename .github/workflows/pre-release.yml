@@ -88,8 +88,8 @@ jobs:
           path: build/
 
       - name: Display structure of downloaded files
-        run: ls -la
-        working-directory: build/
+        run: ls -R
+        working-directory: ./
 
 
       - run: poetry config repositories.testpypi https://test.pypi.org/legacy/
