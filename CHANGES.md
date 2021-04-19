@@ -1,6 +1,9 @@
 Changelog
 =========
 
+### 1.0.06
+- Fixed C++ attachment in wheel generation
+
 ### 1.0.05
 - attempting to publish multiplatform wheels using artifacts:
     - for python 3.7, 3.8, 3.9
