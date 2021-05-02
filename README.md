@@ -68,4 +68,3 @@ Package is built and managed via `poetry`.
 # Information
 - [project web_site](http://senseable.mit.edu/community_detection/)
 - [paper](http://journals.aps.org/pre/abstract/10.1103/PhysRevE.90.012811)
-- 
