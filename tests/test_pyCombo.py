@@ -189,3 +189,14 @@ def test_intermediate_results(karate, tmp_path):
     file = tmp_path / 'tmp_communities.txt'
     partition, _ = pycombo.execute(karate, intermediate_results_path=str(file))
     assert file.read_text().strip() == "\n".join(map(str, list(zip(*sorted(partition.items())))[1]))
+
+
+def test_01_2022_crash(test_crash_01_2022_graph):
+    import pycombo
+
+    mods = []
+    num_runs = 5
+    for i in range(num_runs):
+        _, modularity = pycombo.execute(test_crash_01_2022_graph, random_seed=i)
+        mods.append(modularity)
+    assert len(mods) == num_runs
