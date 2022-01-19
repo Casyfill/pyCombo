@@ -1,6 +1,9 @@
 Changelog
 =========
 
+### 1.0.07
+- Added a crash fix for C++ version
+
 ### 1.0.06
 - Fixed C++ attachment in wheel generation
 
