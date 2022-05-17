@@ -306,14 +306,14 @@ python-versions = "*"
 
 [[package]]
 name = "pybind11"
-version = "2.6.2"
+version = "2.9.2"
 description = "Seamless operability between C++11 and Python"
 category = "main"
 optional = false
-python-versions = "!=3.0,!=3.1,!=3.2,!=3.3,!=3.4,>=2.7"
+python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
 
 [package.extras]
-global = ["pybind11-global (==2.6.2)"]
+global = ["pybind11-global (==2.9.2)"]
 
 [[package]]
 name = "pycodestyle"
@@ -487,7 +487,7 @@ testing = ["pytest (>=3.5,!=3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "0c6d28a0b0134b106cb559cc62264aa3dbd64dbb167a7205db15a91159a092f3"
+content-hash = "739b5ae84ae695f5f6a82424368a78eb60e542bb878b457ee214e97979a278b8"
 
 [metadata.files]
 appdirs = [
@@ -692,8 +692,8 @@ py-cpuinfo = [
     {file = "py-cpuinfo-7.0.0.tar.gz", hash = "sha256:9aa2e49675114959697d25cf57fec41c29b55887bff3bc4809b44ac6f5730097"},
 ]
 pybind11 = [
-    {file = "pybind11-2.6.2-py2.py3-none-any.whl", hash = "sha256:2d8aebe1709bc367e34e3b23d8eccbf3f387ee9d5640548c6260d33b59f02405"},
-    {file = "pybind11-2.6.2.tar.gz", hash = "sha256:d0e0aed9279656f21501243b707eb6e3b951e89e10c3271dedf3ae41c365e5ed"},
+    {file = "pybind11-2.9.2-py2.py3-none-any.whl", hash = "sha256:20f56674da31c96bca7569b91e60f2bd30d693f0728541412ec927574f7bc9df"},
+    {file = "pybind11-2.9.2.tar.gz", hash = "sha256:e5541f8bccf9111d1a94f7897593b55c4cf1a28d5e8cfc8225a855651f011071"},
 ]
 pycodestyle = [
     {file = "pycodestyle-2.8.0-py2.py3-none-any.whl", hash = "sha256:720f8b39dde8b293825e7ff02c475f3077124006db4f440dcbc9a20b76548a20"},
