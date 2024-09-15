@@ -16,7 +16,7 @@ python -m pip install pycombo
 ```
 If you use Python 3.7, install pyCombo 0.1.07:
 ```bash
-python -m pip install pycombo@0.1.07
+python -m pip install pycombo==0.1.07
 ```
 
 ## Quick Start
