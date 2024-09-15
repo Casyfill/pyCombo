@@ -61,7 +61,7 @@ def execute(
         `modularity_resolution` is ignored in this case.
     verbose : int, default 0
         Indicates how much progress information Combo should print out.
-        For now Combo has only one level starting at verbose >= 1.
+        For now, Combo has only one level starting at verbose >= 1.
     intermediate_results_path : str, default None
         Path to the file where community assignments will be saved on each iteration.
         If None or empty, intermediate results will not be saved.
