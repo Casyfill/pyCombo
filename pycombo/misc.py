@@ -80,7 +80,7 @@ def deconstruct_graph(graph, weight: Optional[str] = None) -> Tuple[nodes_, edge
         if is_weighted(graph, weight=weight):
             default_ = 0
         else:
-            logger.info(f"No property found: `{weight}`. Using as unweighted graph")
+            logger.info(f"No property found: '{weight}'. Using as unweighted graph")
 
     nodenum, nodes = dict(), dict()
     for i, n in enumerate(graph.nodes()):

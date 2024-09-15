@@ -75,7 +75,10 @@ cdlib = ">=0.4.0"
 python-louvain = ">=0.16"
 pytest-benchmark = ">=3.2.3"
 pytest-cov = ">=2.10.1"
-flake8 = ">=4.0.1"
+flake8 = [
+    {version = ">=4.0.1", python = "3.8"},
+    {version = ">=6.1.0", python = ">=3.9"},
+]
 black = ">=22.3"
 pre-commit = ">=2.19.0"
 pip = ">=21.0.1"
