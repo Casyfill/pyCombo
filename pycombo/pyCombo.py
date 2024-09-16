@@ -140,7 +140,7 @@ def execute(
         }
 
     else:
-        raise ValueError(f"Wrong graph representation: {graph.__repr__()}")
+        raise ValueError(f"Wrong graph representation: `{graph}`")
 
     logger.debug(f"Modularity for {graph.__repr__()}: {modularity:.5f}")
 
