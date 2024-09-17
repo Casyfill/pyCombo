@@ -52,7 +52,7 @@ def test_start_sep_graph() -> nx.Graph:
 def karate() -> nx.Graph:
     import networkx as nx
 
-    return nx.karate_club_graph()
+    return nx.Graph(nx.karate_club_graph().edges())  # ignore weights
 
 
 @pytest.fixture(scope="session")

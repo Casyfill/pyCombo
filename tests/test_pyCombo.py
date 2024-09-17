@@ -54,10 +54,10 @@ def test_execute_from_file(karate):
     nx.write_pajek(karate, path)
     partition, modularity = pycombo.execute(path, random_seed=seed)
     assert modularity == pytest.approx(0.41979, 0.000001), modularity
-    assert _partitionGroup(partition) == _partitionGroup({0: 2, 1: 2, 2: 2, 3: 2, 4: 0, 5: 0, 6: 0, 7: 2, 8: 1, 9: 1,
-                                                          10: 0, 11: 2, 12: 2, 13: 2, 14: 1, 15: 1, 16: 0, 17: 2, 18: 1, 19: 2,
-                                                          20: 1, 21: 2, 22: 1, 23: 3, 24: 3, 25: 3, 26: 1, 27: 3, 28: 3, 29: 1,
-                                                          30: 1, 31: 3, 32: 1, 33: 1})
+    assert _partitionGroup(partition) == _partitionGroup({0: 0, 1: 0, 2: 0, 3: 0, 4: 2, 5: 2, 6: 2, 7: 0, 8: 3, 9: 2,
+                                                          10: 0, 11: 0, 12: 0, 13: 0, 14: 0, 15: 0, 16: 1, 17: 3, 18: 3, 19: 1,
+                                                          20: 1, 21: 3, 22: 2, 23: 3, 24: 3, 25: 3, 26: 3, 27: 3, 28: 3, 29: 1,
+                                                          30: 1, 31: 3, 32: 1, 33: 3})
     os.remove(path)
 
 
@@ -105,6 +105,7 @@ def test_mod_matrix_as_list(karate):
     partition_g, modularity_g = execute(karate, random_seed=seed)
     mod_matrix = _get_modularity_matrix(karate)
     partition_m, modularity_m = execute(mod_matrix.tolist(), treat_as_modularity=True, random_seed=seed)
+    partition_m = {n: partition_m[i] for i, n in enumerate(karate.nodes)}
     assert modularity_m == pytest.approx(modularity_g, 0.000001), (modularity_m, modularity_g)
     assert _partitionGroup(partition_g) == _partitionGroup(partition_m)
 
@@ -116,6 +117,7 @@ def test_mod_matrix_as_numpy(karate):
     partition_g, modularity_g = execute(karate, random_seed=seed)
     mod_matrix = _get_modularity_matrix(karate)
     partition_m, modularity_m = execute(mod_matrix, treat_as_modularity=True, random_seed=seed)
+    partition_m = {n: partition_m[i] for i, n in enumerate(karate.nodes)}
     assert modularity_m == pytest.approx(modularity_g, 0.000001), (modularity_m, modularity_g)
     assert _partitionGroup(partition_g) == _partitionGroup(partition_m)
 
@@ -127,6 +129,7 @@ def test_mod_graph(karate):
     partition_g, modularity_g = execute(karate, random_seed=seed)
     mod_graph = nx.from_numpy_array(_get_modularity_matrix(karate), create_using=nx.DiGraph)
     partition_m, modularity_m = execute(mod_graph, treat_as_modularity=True, random_seed=seed)
+    partition_m = {n: partition_m[i] for i, n in enumerate(karate.nodes)}
     assert modularity_m == pytest.approx(modularity_g, 0.000001), (modularity_m, modularity_g)
     assert _partitionGroup(partition_g) == _partitionGroup(partition_m)
 
@@ -200,7 +203,7 @@ def test_intermediate_results(karate, tmp_path):
     seed = 17
     file = tmp_path / 'tmp_communities.txt'
     partition, _ = pycombo.execute(karate, intermediate_results_path=str(file), random_seed=seed)
-    assert file.read_text().strip() == "\n".join(map(str, list(zip(*sorted(partition.items())))[1]))
+    assert file.read_text().strip() == "\n".join(map(str, list(zip(*partition.items()))[1]))
 
 
 def test_01_2022_crash(test_crash_01_2022_graph):

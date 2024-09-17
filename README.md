@@ -14,6 +14,10 @@ You can install the latest release of pycombo directly from PyPI by executing th
 ```bash
 python -m pip install pycombo
 ```
+If you use Python 3.7, install pyCombo 0.1.07:
+```bash
+python -m pip install pycombo==0.1.07
+```
 
 ## Quick Start
 The basic usage is as follows:
@@ -23,8 +27,8 @@ import networkx as nx
 
 partition = pycombo.execute(nx.karate_club_graph())
 ```
-Package supports [NetworkX](https://networkx.github.io/) graphs and `.net` files. Algorythm uses modularity score as a loss function,
-but you can use your own metrics as node weights with `treat_as_modularity=True` parameter
+Package supports [NetworkX](https://networkx.org/) graphs, Pajek `.net` files, and adjacency matrices passed as numpy array or list.
+Combo algorithm uses modularity score as a loss function, but you can use your own metrics as edge weights with `treat_as_modularity=True` parameter.
 
 #### Parameters
 
@@ -62,8 +66,10 @@ git submodule update --init --recursive
 ```
 
 Package is built and managed via `poetry`.
-- to install dev version, run `poetry install`
+- To use specific python version run `poetry env use 3.12`.
+- To install dev version, run `poetry install`.
 - To build distributions run `poetry build`.
+- To run tests execute `poetry run pytest`.
 
 # Information
 - [project web_site](http://senseable.mit.edu/community_detection/)
