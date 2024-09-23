@@ -1,7 +1,8 @@
 name: Publish to PyPI
 
 on:
-
+  workflow_dispatch:
+    branches: [ master ]
   release:
     types: [released]
 
