@@ -3,7 +3,6 @@ name: Publish to Test PyPI
 on:
   workflow_dispatch:
   push:
-  pull_request:
     branches: [ master ]
 
 jobs:
