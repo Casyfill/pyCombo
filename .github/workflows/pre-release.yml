@@ -1,6 +1,7 @@
 name: Publish to Test PyPI
 
 on:
+  workflow_dispatch:
   push:
     branches: [ master ]
 
@@ -61,7 +62,7 @@ jobs:
       - name: Archive production artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: wheels
+          name: wheels-${{ matrix.os }}-${{ matrix.python-version }}
           path: |
             dist
 
@@ -87,7 +88,8 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          name: wheels
+          pattern: wheels-*
+          merge-multiple: true
           path: dist/
 
       - name: Install dependencies
