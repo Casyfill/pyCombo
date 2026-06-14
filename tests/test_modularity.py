@@ -11,9 +11,7 @@ def test_c_import():
 
 
 def _comm_groups(partition: dict) -> list:
-    """convert partition node->comm
-    into list of sets of nodes, one set per community
-    """
+    """convert partition node->comm into list of sets of nodes, one set per community"""
     result = dict()
     for k, v in partition.items():
         result[v] = result.get(v, list()) + [k]
@@ -21,8 +19,6 @@ def _comm_groups(partition: dict) -> list:
 
 
 def test_modularity_karate(karate, benchmark):
-    # import networkx as nx
-    # karate = nx.karate_club_graph()
     import networkx.algorithms.community as nx_comm
     from pycombo import execute
 
@@ -57,13 +53,16 @@ def test_relaxed_caveman(relaxed_caveman, benchmark):
     )
 
 
-# def test_modularity_test_graph(test_graph, benchmark):
-#     from pyCombo.pyCombo import get_combo_partition
+def test_combo_modularity_vs_leidenalg(karate):
+    from cdlib import algorithms
+    import networkx.algorithms.community as nx_comm
+    from pycombo import execute
 
-#     partition, modularity = benchmark(
-#         get_combo_partition, test_graph, weight_prop="weight", random_seed=42
-#     )
+    combo_partition, combo_modularity = execute(karate, random_seed=42)
+    leiden_clustering = algorithms.leiden(karate)
+    leiden_modularity = nx_comm.modularity(karate, leiden_clustering.communities)
 
-#     assert isinstance(partition, list)
-#     assert len(partition) == len(test_graph)
-#     assert modularity == pytest.approx(0.16, 0.0001)
+    assert combo_modularity == pytest.approx(
+        nx_comm.modularity(karate, _comm_groups(combo_partition)), abs=1e-4
+    )
+    assert combo_modularity >= leiden_modularity - 1e-4

@@ -1,23 +1,35 @@
-[tool.poetry]
+[build-system]
+requires = ["scikit-build-core>=0.10", "pybind11>=2.13"]
+build-backend = "scikit_build_core.build"
+
+[project]
 name = "pycombo"
-version = "0.1.08"
+version = "0.1.10"
 description = "Python wrapper around Combo network partitioning algorithm (C++)"
-authors = ["Philipp <casyfill@gmail.com>"]
-license = "MIT"
 readme = "README.md"
-homepage = "https://github.com/Casyfill/pyCombo"
-keywords = ["Networks", "Graph Theory", "Mathematics", "network", "graph", "discrete mathematics", "math"]
+license = { text = "MIT" }
+authors = [{ name = "Philipp", email = "casyfill@gmail.com" }]
+requires-python = ">=3.9"
+keywords = [
+    "Networks",
+    "Graph Theory",
+    "Mathematics",
+    "network",
+    "graph",
+    "discrete mathematics",
+    "math",
+]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3 :: Only",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Scientific/Engineering :: Bio-Informatics",
@@ -25,69 +37,53 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Mathematics",
     "Topic :: Scientific/Engineering :: Physics",
 ]
+dependencies = []
 
-include = [
-    # C++ sources must be included in the sdist distributions
-    {path = "src", format = "sdist"},
-    # C++ extension must be included in the wheel distributions
-    {path = "pycombo/*.so", format = "wheel"},
-    {path = "pycombo/*.pyd", format = "wheel"},
-]
-
-[tool.poetry.urls]
+[project.urls]
+Homepage = "https://github.com/Casyfill/pyCombo"
 "Bug Tracker" = "https://github.com/Casyfill/pyCombo/issues"
-"Source Code" =  "https://github.com/Casyfill/pyCombo"
+"Source Code" = "https://github.com/Casyfill/pyCombo"
 
-[tool.poetry.build]
-script = "build.py"
-generate-setup-file = false
+[dependency-groups]
+dev = [
+    "numpy>=1.26",
+    "scipy>=1.13.1",
+    "pandas>=2.2.2",
+    "matplotlib>=3.9.2",
+    "scikit-learn>=1.5.2",
+    "pytest>=7.1.2",
+    "networkx>=3.1",
+    "igraph>=0.11.6",
+    "leidenalg>=0.10.2",
+    "cdlib>=0.4.0",
+    "python-louvain>=0.16",
+    "pytest-benchmark>=3.2.3",
+    "pytest-cov>=2.10.1",
+    "flake8>=6.1.0",
+    "black>=22.3",
+    "pre-commit>=2.19.0",
+    "ipykernel>=6.29.5",
+    "tqdm>=4.66.5",
+    "cibuildwheel>=2.22",
+]
 
-[tool.poetry.dependencies]
-python = "^3.8"
+[tool.scikit-build]
+wheel.packages = ["pycombo"]
+sdist.include = ["src/Combo/**", "src/Binder.cpp", "CMakeLists.txt"]
 
-[tool.poetry.dev-dependencies]
-numpy = [
-    {version = "^1.21", python = "<3.9"},
-    {version = "^1.26", python = ">=3.9"}
-]
-scipy = [
-    {version = "^1.10.1", python = "3.8"},
-    {version = "^1.13.1", python = "3.9"},
-    {version = ">=1.14.1", python = ">=3.10"}
-]
-pandas = [
-    {version = "^2.0.3", python = "3.8"},
-    {version = ">=2.2.2", python = ">=3.9"}
-]
-matplotlib = [
-    {version = "^3.7.5", python = "3.8"},
-    {version = ">=3.9.2", python = ">=3.9"}
-]
-scikit-learn = [
-    {version = ">=1.3.2", python = "<3.10"},
-    {version = ">=1.5.2", python = ">=3.10"},
-]
-pytest = ">=7.1.2"
-networkx = ">=3.1"
-igraph = ">=0.11.6"
-leidenalg = ">=0.10.2"
-cdlib = ">=0.4.0"
-python-louvain = ">=0.16"
-pytest-benchmark = ">=3.2.3"
-pytest-cov = ">=2.10.1"
-flake8 = [
-    {version = ">=4.0.1", python = "3.8"},
-    {version = ">=6.1.0", python = ">=3.9"},
-]
-black = ">=22.3"
-pre-commit = ">=2.19.0"
-pip = ">=21.0.1"
-ipykernel = ">=6.29.5"
-tqdm = ">=4.66.5"
+[tool.pytest.ini_options]
+testpaths = ["tests"]
 
-[build-system]
-requires = ["poetry-core>=1.0.1", "pybind11>=2.13.5", "setuptools>=74"]
-build-backend = "poetry.core.masonry.api"
+[tool.cibuildwheel]
+build = "cp39-* cp310-* cp311-* cp312-* cp313-*"
+skip = "*-musllinux_*"
+build-frontend = "build[uv]"
 
-[tool.pytest]
-testpaths = "tests"
+[tool.cibuildwheel.linux]
+archs = ["x86_64", "aarch64"]
+
+[tool.cibuildwheel.macos]
+archs = ["x86_64", "arm64"]
+
+[tool.cibuildwheel.windows]
+archs = ["AMD64"]

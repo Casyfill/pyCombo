@@ -46,6 +46,80 @@ def test_deconstruct_graph(karate):
     assert len(edges) == karate.size()
 
 
+def test_deconstruct_graph_unweighted_defaults():
+    from pycombo.misc import deconstruct_graph
+
+    graph = nx.path_graph(4)
+    _, edges = deconstruct_graph(graph, weight=None)
+    assert all(weight == 1.0 for _, _, weight in edges)
+
+
+def test_deconstruct_graph_weighted_defaults():
+    from pycombo.misc import deconstruct_graph
+
+    graph = nx.Graph()
+    graph.add_edge(0, 1, weight=2.0)
+    graph.add_edge(1, 2)
+    _, edges = deconstruct_graph(graph, weight="weight")
+    edge_weights = {(u, v): weight for u, v, weight in edges}
+    assert edge_weights[(0, 1)] == 2.0
+    assert edge_weights[(1, 2)] == 0.0
+
+
+def test_random_seed_reproducibility(karate):
+    from pycombo import execute
+
+    partition_a, modularity_a = execute(karate, random_seed=123)
+    partition_b, modularity_b = execute(karate, random_seed=123)
+    assert partition_a == partition_b
+    assert modularity_a == modularity_b
+
+
+def test_community_attribute_writes_to_graph(karate):
+    from pycombo import execute
+
+    partition, _ = execute(
+        karate,
+        random_seed=17,
+        community_attribute="community",
+    )
+    for node, community in partition.items():
+        assert karate.nodes[node]["community"] == community
+
+
+def test_as_clustering_returns_cdlib_object(karate):
+    from cdlib.classes import NodeClustering
+    from pycombo import execute
+
+    clustering, modularity = execute(
+        karate,
+        random_seed=17,
+        as_clustering=True,
+    )
+    assert isinstance(clustering, NodeClustering)
+    assert modularity == pytest.approx(0.41979, abs=1e-5)
+
+
+def test_as_clustering_and_community_attribute(karate):
+    from pycombo import execute
+
+    clustering, _ = execute(
+        karate,
+        random_seed=17,
+        community_attribute="combo_community",
+        as_clustering=True,
+    )
+    assert len(clustering.communities) > 0
+    assert all("combo_community" in karate.nodes[node] for node in karate.nodes)
+
+
+def test_as_clustering_requires_networkx_graph():
+    from pycombo import execute
+
+    with pytest.raises(ValueError, match="as_clustering is only supported"):
+        execute([[0.0, 1.0], [1.0, 0.0]], as_clustering=True)
+
+
 def test_execute_from_file(karate):
     import pycombo
 

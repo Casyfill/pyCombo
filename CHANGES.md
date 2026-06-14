@@ -1,7 +1,23 @@
 Changelog
 =========
 
-### 1.0.07
+### 0.1.10
+- Fixed edge weight defaults in `deconstruct_graph` (1.0 for unweighted, 0.0 fallback on weighted graphs)
+- Added `community_attribute` and `as_clustering` kwargs for NetworkX/cdlib interop
+- Added reproducibility test for `random_seed` and modularity quality check vs leidenalg
+- Added `py.typed` marker and improved type hints on `execute()`
+- Switched release CI to cibuildwheel with Linux aarch64 + macOS arm64/x86_64 wheels
+- Added Python 3.13 support
+
+### 0.1.09
+- Migrated from Poetry to uv for package management
+- Replaced custom `build.py` (distutils) with scikit-build-core + CMake
+- Dropped Python 3.8 support (now requires Python 3.9+)
+- Refactored `execute()` interface: shared params dict, improved type dispatch
+- Added `_combo.pyi` typing stub for IDE support
+- Updated CI workflows to use uv and `pypa/gh-action-pypi-publish`
+
+### 0.1.07
 - Added a crash fix for C++ version
 
 ### 1.0.06

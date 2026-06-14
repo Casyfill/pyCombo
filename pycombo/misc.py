@@ -67,6 +67,24 @@ def is_weighted(G, edge: Optional[tuple] = None, weight: str = "weight") -> bool
     return all(weight in data for u, v, data in G.edges(data=True))
 
 
+def _has_weight_attribute(graph, weight: str) -> bool:
+    return any(weight in data for u, v, data in graph.edges(data=True))
+
+
+def _default_edge_weight(graph, weight: Optional[str]) -> float:
+    """Return the fallback edge weight for edges missing the weight attribute.
+
+    Unweighted graphs use 1.0 (standard modularity convention).
+    Weighted graphs use 0.0 for edges that lack the weight attribute.
+    """
+    if weight is None:
+        return 1.0
+    if _has_weight_attribute(graph, weight):
+        return 0.0
+    logger.info(f"No property found: `{weight}`. Using as unweighted graph")
+    return 1.0
+
+
 def deconstruct_graph(graph, weight: Optional[str] = None) -> Tuple[nodes_, edges_]:
     """deconstructs networkx.Graph
 
@@ -74,13 +92,7 @@ def deconstruct_graph(graph, weight: Optional[str] = None) -> Tuple[nodes_, edge
     dictionary of nodes (index, name)
     and na array of edge tuples (from, to, weight)
     """
-    default_: int = 1
-
-    if weight is not None:
-        if is_weighted(graph, weight=weight):
-            default_ = 0
-        else:
-            logger.info(f"No property found: `{weight}`. Using as unweighted graph")
+    default_weight = _default_edge_weight(graph, weight)
 
     nodenum, nodes = dict(), dict()
     for i, n in enumerate(graph.nodes()):
@@ -88,10 +100,11 @@ def deconstruct_graph(graph, weight: Optional[str] = None) -> Tuple[nodes_, edge
         nodes[i] = n
 
     edges = []
-    for edge in graph.edges(
-        data=True
-    ):  # NOTE: could switch to data=False and save a few milliseconds for unweighted graph
-        edges.append(
-            (nodenum[edge[0]], nodenum[edge[1]], edge[2].get(weight, default_))
-        )
+    weight_key = weight if weight is not None else "weight"
+    for edge in graph.edges(data=True):
+        if weight is None:
+            edge_weight = default_weight
+        else:
+            edge_weight = edge[2].get(weight_key, default_weight)
+        edges.append((nodenum[edge[0]], nodenum[edge[1]], edge_weight))
     return nodes, edges
