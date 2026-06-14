@@ -81,7 +81,7 @@ More examples can be found in [example](https://github.com/Casyfill/pyCombo/tree
 
 ## Development
 
-This repo uses https://github.com/Alexander-Belyi/Combo as a [git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
+This repo uses [C++ source](https://github.com/Alexander-Belyi/Combo) as a [git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
 So for local development, clone with `--recurse-submodules` flag, as:
 ```bash
 git clone --recurse-submodules https://github.com/Casyfill/pyCombo
@@ -100,4 +100,4 @@ Package is built and managed via [uv](https://docs.astral.sh/uv/).
 
 # Information
 - [project web_site](http://senseable.mit.edu/community_detection/)
-- [paper](http://journals.aps.org/pre/abstract/10.1103/PhysRevE.90.012811)
+- [PyCombo paper](http://journals.aps.org/pre/abstract/10.1103/PhysRevE.90.012811) ([Arxiv](https://arxiv.org/abs/1308.3508))
