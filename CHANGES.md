@@ -1,6 +1,10 @@
 Changelog
 =========
 
+### 0.2.0
+- **License changed from MIT to GPL-3.0-or-later** to align with the GPL-licensed [Combo C++ source](https://github.com/Alexander-Belyi/Combo) this package wraps. Downstream use must comply with GPLv3+ terms.
+- Added `CITATION.cff` with citation metadata
+
 ### 0.1.10
 - Fixed edge weight defaults in `deconstruct_graph` (1.0 for unweighted, 0.0 fallback on weighted graphs)
 - Added `community_attribute` and `as_clustering` kwargs for NetworkX/cdlib interop

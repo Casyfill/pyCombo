@@ -4,10 +4,10 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "pycombo"
-version = "0.1.10"
+version = "0.2.0"
 description = "Python wrapper around Combo network partitioning algorithm (C++)"
 readme = "README.md"
-license = { text = "MIT" }
+license = "GPL-3.0-or-later"
 authors = [{ name = "Philipp", email = "casyfill@gmail.com" }]
 requires-python = ">=3.9"
 keywords = [

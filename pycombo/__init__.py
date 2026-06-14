@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
 try:
     import importlib.metadata as importlib_metadata
 except ModuleNotFoundError:

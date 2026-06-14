@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 from __future__ import annotations
 
 import logging
@@ -10,7 +11,7 @@ from pycombo.misc import deconstruct_graph, is_graph
 
 __author__ = "Philipp Kats"
 __copyright__ = "Philipp Kats"
-__license__ = "MIT"
+__license__ = "GPL-3.0-or-later"
 __all__ = ["execute"]
 
 logger = logging.getLogger(__name__)

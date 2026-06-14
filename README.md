@@ -98,6 +98,10 @@ Package is built and managed via [uv](https://docs.astral.sh/uv/).
 - To build all platform wheels locally run `uv run cibuildwheel --output-dir wheelhouse`.
 - To run tests execute `uv run pytest`.
 
+## License
+
+pyCombo is licensed under the [GNU General Public License v3.0 or later](LICENSE) (GPLv3+).
+
 # Information
 - [project web_site](http://senseable.mit.edu/community_detection/)
 - [PyCombo paper](http://journals.aps.org/pre/abstract/10.1103/PhysRevE.90.012811) ([Arxiv](https://arxiv.org/abs/1308.3508))
