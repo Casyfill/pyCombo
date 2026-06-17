@@ -77,7 +77,7 @@ testpaths = ["tests"]
 [tool.cibuildwheel]
 build = "cp39-* cp310-* cp311-* cp312-* cp313-*"
 skip = "*-musllinux_*"
-build-frontend = "build[uv]"
+build-frontend = "build"
 
 [tool.cibuildwheel.linux]
 archs = ["x86_64", "aarch64"]
