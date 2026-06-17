@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, List, Optional, Set, Tuple, Union, overload
+from typing import Any, Dict, List, Literal, Optional, Set, Tuple, Union, overload
 
 import pycombo._combo as comboCPP
 from pycombo.misc import deconstruct_graph, is_graph
@@ -17,7 +17,7 @@ __all__ = ["execute"]
 logger = logging.getLogger(__name__)
 
 Partition = Dict[Any, int]
-ExecuteResult = Union[Partition, Tuple[Partition, float], Any]
+ExecuteResult = Union[Partition, Tuple[Partition, float], Any, Tuple[Any, float]]
 
 
 def _is_ndarray(graph: Any) -> bool:
@@ -61,10 +61,50 @@ def execute(
     verbose: int = 0,
     intermediate_results_path: Optional[str] = None,
     *,
-    return_modularity: bool = True,
+    return_modularity: Literal[True] = True,
     random_seed: Optional[int] = None,
     community_attribute: Optional[str] = None,
-    as_clustering: bool = False,
+    as_clustering: Literal[True],
+) -> Tuple[Any, float]: ...
+
+
+@overload
+def execute(
+    graph: Any,
+    weight: Optional[str] = "weight",
+    max_communities: Optional[int] = None,
+    modularity_resolution: float = 1.0,
+    num_split_attempts: int = 0,
+    fixed_split_step: int = 0,
+    start_separate: bool = False,
+    treat_as_modularity: bool = False,
+    verbose: int = 0,
+    intermediate_results_path: Optional[str] = None,
+    *,
+    return_modularity: Literal[False],
+    random_seed: Optional[int] = None,
+    community_attribute: Optional[str] = None,
+    as_clustering: Literal[True],
+) -> Any: ...
+
+
+@overload
+def execute(
+    graph: Any,
+    weight: Optional[str] = "weight",
+    max_communities: Optional[int] = None,
+    modularity_resolution: float = 1.0,
+    num_split_attempts: int = 0,
+    fixed_split_step: int = 0,
+    start_separate: bool = False,
+    treat_as_modularity: bool = False,
+    verbose: int = 0,
+    intermediate_results_path: Optional[str] = None,
+    *,
+    return_modularity: Literal[True] = True,
+    random_seed: Optional[int] = None,
+    community_attribute: Optional[str] = None,
+    as_clustering: Literal[False] = ...,
 ) -> Tuple[Partition, float]: ...
 
 
@@ -81,10 +121,10 @@ def execute(
     verbose: int = 0,
     intermediate_results_path: Optional[str] = None,
     *,
-    return_modularity: bool = False,
+    return_modularity: Literal[False],
     random_seed: Optional[int] = None,
     community_attribute: Optional[str] = None,
-    as_clustering: bool = False,
+    as_clustering: Literal[False] = ...,
 ) -> Partition: ...
 
 
@@ -170,9 +210,10 @@ def execute(
         "start_separate": start_separate,
         "treat_as_modularity": treat_as_modularity,
         "verbose": verbose,
-        "intermediate_results_path": intermediate_results_path,
         "random_seed": random_seed,
     }
+    if intermediate_results_path:
+        params["intermediate_results_path"] = intermediate_results_path
 
     nx_graph = graph if is_graph(graph) else None
 
@@ -181,14 +222,14 @@ def execute(
             graph_path=graph,
             **params,
         )
-        partition = {i: community for i, community in enumerate(community_labels)}
+        partition = dict(enumerate(community_labels))
 
     elif isinstance(graph, list) or _is_ndarray(graph):
         community_labels, modularity = comboCPP.execute_from_matrix(
             matrix=graph,
             **params,
         )
-        partition = {i: community for i, community in enumerate(community_labels)}
+        partition = dict(enumerate(community_labels))
 
     elif is_graph(graph):
         if len(graph) == 0:
