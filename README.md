@@ -16,9 +16,11 @@ python -m pip install pycombo
 ```
 Pre-built wheels are published for Linux (x86_64, aarch64), macOS (Intel + Apple Silicon), and Windows.
 
-If you use Python 3.8, install pyCombo 0.1.07:
+Starting with v1.2, only Python 3.9+ is supported. For older Python versions, install the last compatible release:
+
 ```bash
-python -m pip install pycombo==0.1.07
+python -m pip install pycombo==0.1.08  # Python 3.8
+python -m pip install pycombo==0.1.07  # Python 3.7
 ```
 
 ## Quick Start

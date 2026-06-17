@@ -3473,7 +3473,7 @@ wheels = [
 
 [[package]]
 name = "pycombo"
-version = "0.1.10"
+version = "1.2.0"
 source = { editable = "." }
 
 [package.dev-dependencies]
