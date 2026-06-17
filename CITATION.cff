@@ -1,0 +1,44 @@
+cff-version: 1.2.0
+message: >-
+  If you use pyCombo in your work, please cite the Combo algorithm paper
+  (see preferred-citation) and, optionally, this software.
+title: pyCombo
+abstract: >-
+  pyCombo is a Python wrapper around the C++ implementation of the Combo
+  network community-detection algorithm.
+type: software
+authors:
+  - given-names: Philipp
+    family-names: Kats
+    # orcid: "https://orcid.org/0000-0000-0000-0000"   # add if you have one
+repository-code: "https://github.com/Casyfill/pyCombo"
+url: "https://github.com/Casyfill/pyCombo"
+license: GPL-3.0-or-later
+keywords:
+  - community detection
+  - modularity
+  - network science
+  - graph
+  - pybind11
+# version: 0.1.08          # bump to match the released version you are tagging
+# date-released: 2024-09-24
+preferred-citation:
+  type: article
+  title: >-
+    General optimization technique for high-quality community detection
+    in complex networks
+  authors:
+    - given-names: Stanislav
+      family-names: Sobolevsky
+    - given-names: Riccardo
+      family-names: Campari
+    - given-names: Alexander
+      family-names: Belyi
+    - given-names: Carlo
+      family-names: Ratti
+  journal: "Physical Review E"
+  volume: 90
+  issue: 1
+  start: "012811"
+  year: 2014
+  doi: "10.1103/PhysRevE.90.012811"

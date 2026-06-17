@@ -1,26 +1,138 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 from __future__ import annotations
 
 import logging
-from typing import Optional, Tuple, Union
+from typing import Any, Dict, List, Literal, Optional, Set, Tuple, Union, overload
 
 import pycombo._combo as comboCPP
 from pycombo.misc import deconstruct_graph, is_graph
 
 __author__ = "Philipp Kats"
 __copyright__ = "Philipp Kats"
-__license__ = "fmit"
+__license__ = "GPL-3.0-or-later"
 __all__ = ["execute"]
 
 logger = logging.getLogger(__name__)
+
+Partition = Dict[Any, int]
+ExecuteResult = Union[Partition, Tuple[Partition, float], Any, Tuple[Any, float]]
+
+
+def _is_ndarray(graph: Any) -> bool:
+    return type(graph).__module__ == "numpy" and type(graph).__name__ == "ndarray"
+
+
+def _partition_to_communities(partition: Partition) -> List[Set[Any]]:
+    communities: Dict[int, Set[Any]] = {}
+    for node, community in partition.items():
+        communities.setdefault(community, set()).add(node)
+    return list(communities.values())
+
+
+def _write_partition_to_graph(
+    graph: Any, partition: Partition, attribute: str
+) -> None:
+    for node, community in partition.items():
+        graph.nodes[node][attribute] = community
+
+
+def _to_node_clustering(graph: Any, partition: Partition) -> Any:
+    from cdlib.classes import NodeClustering
+
+    return NodeClustering(
+        communities=_partition_to_communities(partition),
+        graph=graph,
+        method_name="combo",
+    )
+
+
+@overload
+def execute(
+    graph: Any,
+    weight: Optional[str] = "weight",
+    max_communities: Optional[int] = None,
+    modularity_resolution: float = 1.0,
+    num_split_attempts: int = 0,
+    fixed_split_step: int = 0,
+    start_separate: bool = False,
+    treat_as_modularity: bool = False,
+    verbose: int = 0,
+    intermediate_results_path: Optional[str] = None,
+    *,
+    return_modularity: Literal[True] = True,
+    random_seed: Optional[int] = None,
+    community_attribute: Optional[str] = None,
+    as_clustering: Literal[True],
+) -> Tuple[Any, float]: ...
+
+
+@overload
+def execute(
+    graph: Any,
+    weight: Optional[str] = "weight",
+    max_communities: Optional[int] = None,
+    modularity_resolution: float = 1.0,
+    num_split_attempts: int = 0,
+    fixed_split_step: int = 0,
+    start_separate: bool = False,
+    treat_as_modularity: bool = False,
+    verbose: int = 0,
+    intermediate_results_path: Optional[str] = None,
+    *,
+    return_modularity: Literal[False],
+    random_seed: Optional[int] = None,
+    community_attribute: Optional[str] = None,
+    as_clustering: Literal[True],
+) -> Any: ...
+
+
+@overload
+def execute(
+    graph: Any,
+    weight: Optional[str] = "weight",
+    max_communities: Optional[int] = None,
+    modularity_resolution: float = 1.0,
+    num_split_attempts: int = 0,
+    fixed_split_step: int = 0,
+    start_separate: bool = False,
+    treat_as_modularity: bool = False,
+    verbose: int = 0,
+    intermediate_results_path: Optional[str] = None,
+    *,
+    return_modularity: Literal[True] = True,
+    random_seed: Optional[int] = None,
+    community_attribute: Optional[str] = None,
+    as_clustering: Literal[False] = ...,
+) -> Tuple[Partition, float]: ...
+
+
+@overload
+def execute(
+    graph: Any,
+    weight: Optional[str] = "weight",
+    max_communities: Optional[int] = None,
+    modularity_resolution: float = 1.0,
+    num_split_attempts: int = 0,
+    fixed_split_step: int = 0,
+    start_separate: bool = False,
+    treat_as_modularity: bool = False,
+    verbose: int = 0,
+    intermediate_results_path: Optional[str] = None,
+    *,
+    return_modularity: Literal[False],
+    random_seed: Optional[int] = None,
+    community_attribute: Optional[str] = None,
+    as_clustering: Literal[False] = ...,
+) -> Partition: ...
 
 
 def execute(
     graph,
     weight: Optional[str] = "weight",
     max_communities: Optional[int] = None,
-    modularity_resolution: int = 1,
+    modularity_resolution: float = 1.0,
     num_split_attempts: int = 0,
     fixed_split_step: int = 0,
     start_separate: bool = False,
@@ -29,7 +141,9 @@ def execute(
     intermediate_results_path: Optional[str] = None,
     return_modularity: bool = True,
     random_seed: Optional[int] = None,
-) -> Union[Tuple[dict, float], dict]:
+    community_attribute: Optional[str] = None,
+    as_clustering: bool = False,
+) -> ExecuteResult:
     """
     Partition graph into communities using Combo algorithm.
     All details are here: https://github.com/Casyfill/pyCOMBO
@@ -71,6 +185,12 @@ def execute(
         Random seed to use.
         None indicates using some internal default value that is based on time
         and is expected to be different for each call.
+    community_attribute : str, optional
+        When partitioning a NetworkX graph, write community labels to
+        ``graph.nodes[node][community_attribute]``.
+    as_clustering : bool, default False
+        When True, return a ``cdlib.classes.NodeClustering`` instead of a dict.
+        Requires cdlib to be installed.
 
     Returns
     -------
@@ -82,37 +202,34 @@ def execute(
     if max_communities is not None and max_communities <= 0:
         max_communities = None
 
-    if type(graph) is str:
+    params = {
+        "max_communities": max_communities,
+        "modularity_resolution": modularity_resolution,
+        "num_split_attempts": num_split_attempts,
+        "fixed_split_step": fixed_split_step,
+        "start_separate": start_separate,
+        "treat_as_modularity": treat_as_modularity,
+        "verbose": verbose,
+        "random_seed": random_seed,
+    }
+    if intermediate_results_path:
+        params["intermediate_results_path"] = intermediate_results_path
+
+    nx_graph = graph if is_graph(graph) else None
+
+    if isinstance(graph, str):
         community_labels, modularity = comboCPP.execute_from_file(
             graph_path=graph,
-            max_communities=max_communities,
-            modularity_resolution=modularity_resolution,
-            num_split_attempts=num_split_attempts,
-            fixed_split_step=fixed_split_step,
-            start_separate=start_separate,
-            treat_as_modularity=treat_as_modularity,
-            verbose=verbose,
-            intermediate_results_path=intermediate_results_path,
-            random_seed=random_seed,
+            **params,
         )
+        partition = dict(enumerate(community_labels))
 
-        partition = {i: community for i, community in enumerate(community_labels)}
-
-    elif type(graph) is list or type(graph).__name__ == 'ndarray':
+    elif isinstance(graph, list) or _is_ndarray(graph):
         community_labels, modularity = comboCPP.execute_from_matrix(
             matrix=graph,
-            max_communities=max_communities,
-            modularity_resolution=modularity_resolution,
-            num_split_attempts=num_split_attempts,
-            fixed_split_step=fixed_split_step,
-            start_separate=start_separate,
-            treat_as_modularity=treat_as_modularity,
-            verbose=verbose,
-            intermediate_results_path=intermediate_results_path,
-            random_seed=random_seed,
+            **params,
         )
-
-        partition = {i: community for i, community in enumerate(community_labels)}
+        partition = dict(enumerate(community_labels))
 
     elif is_graph(graph):
         if len(graph) == 0:
@@ -124,15 +241,7 @@ def execute(
             size=graph.number_of_nodes(),
             edges=edges,
             directed=graph.is_directed(),
-            max_communities=max_communities,
-            modularity_resolution=modularity_resolution,
-            num_split_attempts=num_split_attempts,
-            fixed_split_step=fixed_split_step,
-            start_separate=start_separate,
-            treat_as_modularity=treat_as_modularity,
-            verbose=verbose,
-            intermediate_results_path=intermediate_results_path,
-            random_seed=random_seed,
+            **params,
         )
 
         partition = {
@@ -142,7 +251,22 @@ def execute(
     else:
         raise ValueError(f"Wrong graph representation: `{graph}`")
 
-    logger.debug(f"Modularity for {graph.__repr__()}: {modularity:.5f}")
+    logger.debug(f"Modularity for {graph!r}: {modularity:.5f}")
+
+    if community_attribute is not None:
+        if nx_graph is None:
+            raise ValueError(
+                "community_attribute is only supported for NetworkX graph inputs"
+            )
+        _write_partition_to_graph(nx_graph, partition, community_attribute)
+
+    if as_clustering:
+        if nx_graph is None:
+            raise ValueError("as_clustering is only supported for NetworkX graph inputs")
+        clustering = _to_node_clustering(nx_graph, partition)
+        if return_modularity:
+            return clustering, modularity
+        return clustering
 
     if return_modularity:
         return partition, modularity
